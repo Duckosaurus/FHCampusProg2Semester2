@@ -38,6 +38,12 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private boolean ascending = true;
+
+    /**
+     * Initialisiert die Liste der Filme und die anderen FXML Elemente
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
@@ -67,6 +73,9 @@ public class HomeController implements Initializable {
 
     }
 
+    /**
+     * Filtert die Filme nach Auswahl des Genres von dem Dropdown und auch anhand der Eingabe der Such-Textbox (Suche im Titel und in der Beschreibung)
+     */
     private void filterMovies() {
         String query = searchField.getText().toLowerCase().trim();
         if(genreComboBox.getValue() != "-"){
@@ -93,6 +102,9 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um
+     */
     private void sortMovies() {
         Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
         if (!ascending) {

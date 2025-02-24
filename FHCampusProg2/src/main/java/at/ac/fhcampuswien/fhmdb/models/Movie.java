@@ -24,6 +24,10 @@ public class Movie {
     }
     public List<Genre> getGenres() { return genres; }
 
+    /**
+     * Erstellt statische Testdaten in Form von Filmen die in der GUI angezeigt werden
+     * @return Liste mit Film Objekten
+     */
     public static List<Movie> initializeMovies(){
         List<Movie> movies = new ArrayList<>();
         movies.add(new Movie("Inception", "A mind-bending thriller.", List.of(Genre.SCIENCE_FICTION, Genre.THRILLER)));
