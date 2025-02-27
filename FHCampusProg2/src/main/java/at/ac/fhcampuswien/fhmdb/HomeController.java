@@ -41,6 +41,7 @@ public class HomeController implements Initializable {
 
     /**
      * Initialisiert die Liste der Filme und die anderen FXML Elemente
+     *
      * @param url
      * @param resourceBundle
      */
@@ -59,7 +60,7 @@ public class HomeController implements Initializable {
 
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
+            if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
                 sortBtn.setText("Sort (desc)");
             } else {
@@ -77,29 +78,40 @@ public class HomeController implements Initializable {
      * Filtert die Filme nach Auswahl des Genres von dem Dropdown und auch anhand der Eingabe der Such-Textbox (Suche im Titel und in der Beschreibung)
      */
     private void filterMovies() {
+        if (genreComboBox.getValue() == "-") {
+            resetGenre();
+            return;
+        }
+        searchGenre();
+
+    }
+
+    private void resetGenre() {
         String query = searchField.getText().toLowerCase().trim();
-        if(genreComboBox.getValue() != "-"){
-            Genre selectedGenre = (Genre)genreComboBox.getValue();
-            List<Movie> filteredMovies = allMovies.stream()
-                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                            movie.getDescription().toLowerCase().contains(query))
-                    .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
-                    .collect(Collectors.toList());
+        List<Movie> filteredMovies = allMovies.stream()
+                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
+                        movie.getDescription().toLowerCase().contains(query))
+                .collect(Collectors.toList());
 
-            observableMovies.setAll(filteredMovies);
-            movieListView.setItems(observableMovies);   // set data of observable list to list view
-            movieListView.setCellFactory(movieListView -> new MovieCell());
-        }
-        else {
-            List<Movie> filteredMovies = allMovies.stream()
-                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                            movie.getDescription().toLowerCase().contains(query))
-                    .collect(Collectors.toList());
+        setFilterItemsOnView(filteredMovies);
+    }
 
-            observableMovies.setAll(filteredMovies);
-            movieListView.setItems(observableMovies);
-            movieListView.setCellFactory(movieListView -> new MovieCell());
-        }
+    private void searchGenre() {
+        String query = searchField.getText().toLowerCase().trim();
+        Genre selectedGenre = (Genre) genreComboBox.getValue();
+        List<Movie> filteredMovies = allMovies.stream()
+                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
+                        movie.getDescription().toLowerCase().contains(query))
+                .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
+                .collect(Collectors.toList());
+
+        setFilterItemsOnView(filteredMovies);
+    }
+
+    private void setFilterItemsOnView(List<Movie> filteredMovies) {
+        observableMovies.setAll(filteredMovies);
+        movieListView.setItems(observableMovies);   // set data of observable list to list view
+        movieListView.setCellFactory(movieListView -> new MovieCell());
     }
 
     /**
