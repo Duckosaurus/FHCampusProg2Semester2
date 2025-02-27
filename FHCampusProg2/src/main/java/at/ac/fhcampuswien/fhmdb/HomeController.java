@@ -82,7 +82,7 @@ public class HomeController implements Initializable {
             resetGenre();
             return;
         }
-        setGenre();
+        searchGenre();
 
     }
 
@@ -96,7 +96,7 @@ public class HomeController implements Initializable {
         setFilterItemsOnView(filteredMovies);
     }
 
-    private void setGenre() {
+    private void searchGenre() {
         String query = searchField.getText().toLowerCase().trim();
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         List<Movie> filteredMovies = allMovies.stream()
