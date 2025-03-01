@@ -78,11 +78,11 @@ public class HomeController implements Initializable {
      * Filtert die Filme nach Auswahl des Genres von dem Dropdown und auch anhand der Eingabe der Such-Textbox (Suche im Titel und in der Beschreibung)
      */
     private void filterMovies() {
-        if (genreComboBox.getValue() == "-") {
-            resetGenre();
+        if (genreComboBox.getValue() != "-") {
+            searchGenre();
             return;
         }
-        searchGenre();
+        resetGenre();
 
     }
 
@@ -110,7 +110,7 @@ public class HomeController implements Initializable {
 
     private void setFilterItemsOnView(List<Movie> filteredMovies) {
         observableMovies.setAll(filteredMovies);
-        movieListView.setItems(observableMovies);   // set data of observable list to list view
+        movieListView.setItems(observableMovies);
         movieListView.setCellFactory(movieListView -> new MovieCell());
     }
 
