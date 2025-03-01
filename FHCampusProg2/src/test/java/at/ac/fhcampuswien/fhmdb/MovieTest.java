@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +43,21 @@ public class MovieTest {
         assertNull(movie.getDescription());
         assertEquals(1, movie.getGenres().size());
         assertTrue(movie.getGenres().contains(Genre.COMEDY));
+    }
+
+    @Test
+    void testMovieConstructorWithEmptyGenres() {
+        // Create a movie with empty genres list
+        Movie movie = new Movie(
+                "No Genres Movie",
+                "A movie without any genres",
+                Collections.emptyList()
+        );
+
+        // Assert that the movie properties are set correctly
+        assertEquals("No Genres Movie", movie.getTitle());
+        assertEquals("A movie without any genres", movie.getDescription());
+        assertEquals(0, movie.getGenres().size());
     }
 
     @Test
@@ -99,19 +115,74 @@ public class MovieTest {
     }
 
     @Test
-    void testGettersReturnExpectedValues() {
-        // Create a movie
+    void testAllInitializedMoviesHaveValidTitles() {
+        List<Movie> movies = Movie.initializeMovies();
+
+        for (Movie movie : movies) {
+            assertNotNull(movie.getTitle(), "Movie title should not be null");
+            assertFalse(movie.getTitle().isEmpty(), "Movie title should not be empty");
+        }
+    }
+
+    @Test
+    void testMoviesWithSpecificGenres() {
+        List<Movie> movies = Movie.initializeMovies();
+
+        // Count movies with DRAMA genre
+        long dramaCount = movies.stream()
+                .filter(movie -> movie.getGenres().contains(Genre.DRAMA))
+                .count();
+
+        // Count movies with COMEDY genre
+        long comedyCount = movies.stream()
+                .filter(movie -> movie.getGenres().contains(Genre.COMEDY))
+                .count();
+
+        // Verify that we have at least one movie of each genre
+        assertTrue(dramaCount > 0, "There should be at least one DRAMA movie");
+        assertTrue(comedyCount > 0, "There should be at least one COMEDY movie");
+    }
+
+    @Test
+    void testMovieGenresAreImmutable() {
         Movie movie = new Movie(
-                "Parasite",
-                "A poor family schemes to become employed by a wealthy household.",
-                List.of(Genre.CRIME, Genre.DRAMA)
+                "Test Movie",
+                "Test Description",
+                List.of(Genre.ACTION, Genre.ADVENTURE)
         );
 
-        // Test getters
-        assertEquals("Parasite", movie.getTitle());
-        assertEquals("A poor family schemes to become employed by a wealthy household.", movie.getDescription());
-        assertEquals(2, movie.getGenres().size());
-        assertTrue(movie.getGenres().contains(Genre.CRIME));
-        assertTrue(movie.getGenres().contains(Genre.DRAMA));
+        // Try to modify the genres list - should throw UnsupportedOperationException
+        assertThrows(UnsupportedOperationException.class, () -> {
+            movie.getGenres().add(Genre.COMEDY);
+        });
+    }
+
+    @Test
+    void testInitializedMoviesAreUnique() {
+        List<Movie> movies = Movie.initializeMovies();
+
+        // Check that no two movies are completely identical (excluding known duplicates like Inception)
+        for (int i = 0; i < movies.size(); i++) {
+            for (int j = i + 1; j < movies.size(); j++) {
+                Movie movie1 = movies.get(i);
+                Movie movie2 = movies.get(j);
+
+                // If titles are the same, descriptions should be different (as we know from the duplicate test)
+                if (movie1.getTitle().equals(movie2.getTitle())) {
+                    assertNotEquals(movie1.getDescription(), movie2.getDescription(),
+                            "Movies with same title should have different descriptions");
+                }
+            }
+        }
+    }
+
+    @Test
+    void testMoviesHaveAtLeastOneGenre() {
+        List<Movie> movies = Movie.initializeMovies();
+
+        for (Movie movie : movies) {
+            assertFalse(movie.getGenres().isEmpty(),
+                    "Movie '" + movie.getTitle() + "' should have at least one genre");
+        }
     }
 }
