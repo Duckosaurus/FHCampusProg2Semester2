@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -97,22 +98,41 @@ public class HomeController implements Initializable {
     }
 
     private void searchGenre() {
-        String query = searchField.getText().toLowerCase().trim();
-        Genre selectedGenre = (Genre) genreComboBox.getValue();
+        String query = searchField != null ? searchField.getText().toLowerCase().trim() : "";
+        Genre selectedGenre = genreComboBox != null ? (Genre) genreComboBox.getValue() : null;
+
+        if (allMovies == null || allMovies.isEmpty()) {
+            setFilterItemsOnView(Collections.emptyList());
+            return;
+        }
+
         List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                        movie.getDescription().toLowerCase().contains(query))
-                .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
+                .filter(movie -> matchesSearchQuery(movie, query))
+                .filter(movie -> matchesSelectedGenre(movie, selectedGenre))
                 .collect(Collectors.toList());
 
         setFilterItemsOnView(filteredMovies);
     }
 
     private void setFilterItemsOnView(List<Movie> filteredMovies) {
-        observableMovies.setAll(filteredMovies);
-        movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
+        if (observableMovies != null && movieListView != null) {
+            observableMovies.setAll(filteredMovies);
+            movieListView.setItems(observableMovies);
+            movieListView.setCellFactory(movieListView -> new MovieCell());
+        }
     }
+
+    private boolean matchesSearchQuery(Movie movie, String query) {
+        String title = movie.getTitle() != null ? movie.getTitle().toLowerCase() : "";
+        String description = movie.getDescription() != null ? movie.getDescription().toLowerCase() : "";
+
+        return title.contains(query) || description.contains(query);
+    }
+
+    private boolean matchesSelectedGenre(Movie movie, Genre selectedGenre) {
+        return selectedGenre == null || movie.getGenres().contains(selectedGenre);
+    }
+
 
     /**
      * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um
