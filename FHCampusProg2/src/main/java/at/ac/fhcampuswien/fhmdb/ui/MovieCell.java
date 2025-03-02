@@ -17,13 +17,7 @@ public class MovieCell extends ListCell<Movie> {
     private final Label detail = new Label();
     private final Label genres = new Label();
     private final VBox layout = new VBox(title, detail, genres);
-
-    /**
-     * Für jede MovieCell die erstellt wird, wird die Methode aufgerufen um jeden Film darzustellen
-     *
-     * @param movie Film für den die MovieCell erstellt wird
-     * @param empty
-     */
+    
     @Override
     protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);

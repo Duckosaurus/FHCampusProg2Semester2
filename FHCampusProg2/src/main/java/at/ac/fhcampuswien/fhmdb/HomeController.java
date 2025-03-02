@@ -38,12 +38,6 @@ public class HomeController implements Initializable {
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private boolean ascending = true;
 
-    /**
-     * Initialisiert die Liste der Filme und die anderen FXML Elemente
-     *
-     * @param url
-     * @param resourceBundle
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
@@ -87,7 +81,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(allMoviesSearched);
         sortMovies();
     }
-
+    
     public boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
         if (selectedGenre == Genre.ALL) {
             observableMovies.setAll(allMoviesSearched);
@@ -109,9 +103,6 @@ public class HomeController implements Initializable {
     }
 
 
-    /**
-     * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um
-     */
     public void sortMovies() {
         Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
         if (!ascending) {
