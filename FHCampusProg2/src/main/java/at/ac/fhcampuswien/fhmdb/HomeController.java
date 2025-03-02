@@ -54,7 +54,7 @@ public class HomeController implements Initializable {
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
-        
+
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -83,6 +83,7 @@ public class HomeController implements Initializable {
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         if (selectedGenre == Genre.ALL) {
             observableMovies.setAll(allMoviesSearched);
+            sortMovies();
             return;
         }
 
@@ -90,6 +91,7 @@ public class HomeController implements Initializable {
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
                 .toList();
         observableMovies.setAll(allMoviesSearched);
+        sortMovies();
     }
 
 
