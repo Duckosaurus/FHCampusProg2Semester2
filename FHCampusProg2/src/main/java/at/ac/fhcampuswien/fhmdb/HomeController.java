@@ -54,6 +54,7 @@ public class HomeController implements Initializable {
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
+        sortMovies();
 
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
