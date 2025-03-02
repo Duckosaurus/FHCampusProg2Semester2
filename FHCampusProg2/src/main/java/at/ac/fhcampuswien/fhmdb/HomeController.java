@@ -53,11 +53,8 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
         genreComboBox.getItems().addAll(Genre.values());
-        /*
-        TODO:
-            ALL  als erstes auswählen
-        */
-
+        genreComboBox.getSelectionModel().selectFirst();
+        
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
