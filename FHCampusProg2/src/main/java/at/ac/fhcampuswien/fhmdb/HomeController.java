@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -53,12 +52,10 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        genreComboBox.getItems().add("-");
         genreComboBox.getItems().addAll(Genre.values());
-        genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.getSelectionModel().selectFirst();
+        sortMovies();
 
-
-        // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -69,50 +66,48 @@ public class HomeController implements Initializable {
             }
         });
         searchBtn.setOnAction(actionEvent -> {
-            filterMovies();
+            selectedGenre();
         });
 
     }
 
-    /**
-     * Filtert die Filme nach Auswahl des Genres von dem Dropdown und auch anhand der Eingabe der Such-Textbox (Suche im Titel und in der Beschreibung)
-     */
-    private void filterMovies() {
-        if (genreComboBox.getValue() != "-") {
-            searchGenre();
-            return;
-        }
-        resetGenre();
+    public void selectedGenre() {
+        List<Movie> allMoviesSearched = searchMoviesWithText();
 
-    }
-
-    public void resetGenre() {
-        String query = searchField.getText().toLowerCase().trim();
-        List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                        movie.getDescription().toLowerCase().contains(query))
-                .collect(Collectors.toList());
-
-        setFilterItemsOnView(filteredMovies);
-    }
-
-    public void searchGenre() {
-        String query = searchField.getText().toLowerCase().trim();
         Genre selectedGenre = (Genre) genreComboBox.getValue();
-        List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                        movie.getDescription().toLowerCase().contains(query))
+        if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
+
+        filterSpecificGenre(allMoviesSearched, selectedGenre);
+    }
+
+    public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
+        allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
-                .collect(Collectors.toList());
-
-        setFilterItemsOnView(filteredMovies);
+                .toList();
+        observableMovies.setAll(allMoviesSearched);
+        sortMovies();
     }
 
-    private void setFilterItemsOnView(List<Movie> filteredMovies) {
-        observableMovies.setAll(filteredMovies);
-        movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
+    public boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
+        if (selectedGenre == Genre.ALL) {
+            observableMovies.setAll(allMoviesSearched);
+            sortMovies();
+            return true;
+        }
+        return false;
     }
+
+    public List<Movie> searchMoviesWithText() {
+        String query = searchField.getText().toLowerCase().trim();
+        if (!query.isEmpty()) {
+            List<Movie> allMoviesSearched = allMovies.stream()
+                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
+                            movie.getDescription().toLowerCase().contains(query)).toList();
+            return allMoviesSearched;
+        }
+        return allMovies;
+    }
+
 
     /**
      * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um
@@ -126,10 +121,4 @@ public class HomeController implements Initializable {
         ascending = !ascending;
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
     }
-
-    public ObservableList<Movie> getObservableMovies() {
-        return observableMovies;
-    }
-
-
 }

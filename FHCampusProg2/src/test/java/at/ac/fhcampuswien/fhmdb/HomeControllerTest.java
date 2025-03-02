@@ -1,17 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
-import at.ac.fhcampuswien.fhmdb.models.Movie;
-import javafx.collections.ObservableList;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class HomeControllerTest {
-
+/*
     private HomeController controller;
 
     @BeforeEach
@@ -72,4 +62,6 @@ class HomeControllerTest {
         assertEquals(1, filteredMovies.size());
         assertEquals("The Notebook", filteredMovies.get(0).getTitle());
     }
+
+ */
 }

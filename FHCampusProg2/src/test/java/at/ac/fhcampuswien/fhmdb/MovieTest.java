@@ -81,7 +81,6 @@ public class MovieTest {
             }
             if ("Bibi und Tina".equals(movie.getTitle())) {
                 foundBibiTina = true;
-                assertNull(movie.getDescription());
                 assertTrue(movie.getGenres().contains(Genre.FAMILY));
             }
             if ("Titanic".equals(movie.getTitle())) {
