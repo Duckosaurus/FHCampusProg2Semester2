@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -53,12 +52,12 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        genreComboBox.getItems().add("-");
         genreComboBox.getItems().addAll(Genre.values());
-        genreComboBox.setPromptText("Filter by Genre");
+        /*
+        TODO:
+            ALL  als erstes auswählen
+        */
 
-
-        // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -69,50 +68,33 @@ public class HomeController implements Initializable {
             }
         });
         searchBtn.setOnAction(actionEvent -> {
-            filterMovies();
+            selectedGenre();
         });
 
     }
 
-    /**
-     * Filtert die Filme nach Auswahl des Genres von dem Dropdown und auch anhand der Eingabe der Such-Textbox (Suche im Titel und in der Beschreibung)
-     */
-    private void filterMovies() {
-        if (genreComboBox.getValue() != "-") {
-            searchGenre();
+    //TODO: trycatch wenn es Descrition oder Titel Null ist
+    private void selectedGenre() {
+        String query = searchField.getText().toLowerCase().trim();
+        List<Movie> allMoviesSearched = allMovies;
+        if (!query.isEmpty()) {
+            allMoviesSearched = allMovies.stream()
+                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
+                            movie.getDescription().toLowerCase().contains(query)).toList();
+        }
+
+        Genre selectedGenre = (Genre) genreComboBox.getValue();
+        if (selectedGenre == Genre.ALL) {
+            observableMovies.setAll(allMoviesSearched);
             return;
         }
-        resetGenre();
 
-    }
-
-    private void resetGenre() {
-        String query = searchField.getText().toLowerCase().trim();
-        List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                        movie.getDescription().toLowerCase().contains(query))
-                .collect(Collectors.toList());
-
-        setFilterItemsOnView(filteredMovies);
-    }
-
-    private void searchGenre() {
-        String query = searchField.getText().toLowerCase().trim();
-        Genre selectedGenre = (Genre) genreComboBox.getValue();
-        List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                        movie.getDescription().toLowerCase().contains(query))
+        allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
-                .collect(Collectors.toList());
-
-        setFilterItemsOnView(filteredMovies);
+                .toList();
+        observableMovies.setAll(allMoviesSearched);
     }
 
-    private void setFilterItemsOnView(List<Movie> filteredMovies) {
-        observableMovies.setAll(filteredMovies);
-        movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell());
-    }
 
     /**
      * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um

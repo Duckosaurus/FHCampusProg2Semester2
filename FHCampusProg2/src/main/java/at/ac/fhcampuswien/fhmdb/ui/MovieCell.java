@@ -20,6 +20,7 @@ public class MovieCell extends ListCell<Movie> {
 
     /**
      * Für jede MovieCell die erstellt wird, wird die Methode aufgerufen um jeden Film darzustellen
+     *
      * @param movie Film für den die MovieCell erstellt wird
      * @param empty
      */
@@ -29,6 +30,7 @@ public class MovieCell extends ListCell<Movie> {
 
         if (empty || movie == null) {
             setText(null);
+            setGraphic(null);
         } else {
             this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());

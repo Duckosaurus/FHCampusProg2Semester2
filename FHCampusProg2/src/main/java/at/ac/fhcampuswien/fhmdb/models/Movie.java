@@ -22,16 +22,20 @@ public class Movie {
     public String getDescription() {
         return description;
     }
-    public List<Genre> getGenres() { return genres; }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
 
     /**
      * Erstellt statische Testdaten in Form von Filmen die in der GUI angezeigt werden
+     *
      * @return Liste mit Film Objekten
      */
-    public static List<Movie> initializeMovies(){
+    public static List<Movie> initializeMovies() {
         List<Movie> movies = new ArrayList<>();
         movies.add(new Movie("Inception", "A mind-bending thriller.", List.of(Genre.SCIENCE_FICTION, Genre.THRILLER)));
-        movies.add(new Movie("Bibi und Tina", null, List.of(Genre.FAMILY, Genre.ANIMATION)));
+        movies.add(new Movie("Bibi und Tina", "notnull", List.of(Genre.FAMILY, Genre.ANIMATION)));
         movies.add(new Movie("Titanic", "A love story on the Titanic.", List.of(Genre.ROMANCE, Genre.DRAMA)));
         movies.add(new Movie("Inception", "A thief enters dreams to steal secrets but faces unexpected challenges.",
                 List.of(Genre.SCIENCE_FICTION, Genre.ACTION, Genre.THRILLER)));
