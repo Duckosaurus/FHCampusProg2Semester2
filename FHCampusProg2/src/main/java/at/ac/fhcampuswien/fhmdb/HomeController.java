@@ -86,7 +86,7 @@ public class HomeController implements Initializable {
 
     }
 
-    private void resetGenre() {
+    public void resetGenre() {
         String query = searchField.getText().toLowerCase().trim();
         List<Movie> filteredMovies = allMovies.stream()
                 .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
@@ -96,7 +96,7 @@ public class HomeController implements Initializable {
         setFilterItemsOnView(filteredMovies);
     }
 
-    private void searchGenre() {
+    public void searchGenre() {
         String query = searchField.getText().toLowerCase().trim();
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         List<Movie> filteredMovies = allMovies.stream()
@@ -117,7 +117,7 @@ public class HomeController implements Initializable {
     /**
      * Sortiert die Filme auf- oder absteigend nach Titel und dreht den Text im Button um
      */
-    private void sortMovies() {
+    public void sortMovies() {
         Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
         if (!ascending) {
             comparator = comparator.reversed();
@@ -126,4 +126,10 @@ public class HomeController implements Initializable {
         ascending = !ascending;
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
     }
+
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
+    }
+
+
 }
