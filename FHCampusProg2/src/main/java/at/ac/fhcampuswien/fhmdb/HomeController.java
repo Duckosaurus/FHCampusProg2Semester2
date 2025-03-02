@@ -70,28 +70,41 @@ public class HomeController implements Initializable {
 
     }
 
-    //TODO: trycatch wenn es Descrition oder Titel Null ist
     private void selectedGenre() {
-        String query = searchField.getText().toLowerCase().trim();
-        List<Movie> allMoviesSearched = allMovies;
-        if (!query.isEmpty()) {
-            allMoviesSearched = allMovies.stream()
-                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
-                            movie.getDescription().toLowerCase().contains(query)).toList();
-        }
+        List<Movie> allMoviesSearched = searchMoviesWithText();
 
         Genre selectedGenre = (Genre) genreComboBox.getValue();
-        if (selectedGenre == Genre.ALL) {
-            observableMovies.setAll(allMoviesSearched);
-            sortMovies();
-            return;
-        }
+        if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
 
+        filterSpecificGenre(allMoviesSearched, selectedGenre);
+    }
+
+    private void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
         allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
                 .toList();
         observableMovies.setAll(allMoviesSearched);
         sortMovies();
+    }
+
+    private boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
+        if (selectedGenre == Genre.ALL) {
+            observableMovies.setAll(allMoviesSearched);
+            sortMovies();
+            return true;
+        }
+        return false;
+    }
+
+    private List<Movie> searchMoviesWithText() {
+        String query = searchField.getText().toLowerCase().trim();
+        if (!query.isEmpty()) {
+            List<Movie> allMoviesSearched = allMovies.stream()
+                    .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
+                            movie.getDescription().toLowerCase().contains(query)).toList();
+            return allMoviesSearched;
+        }
+        return allMovies;
     }
 
 
