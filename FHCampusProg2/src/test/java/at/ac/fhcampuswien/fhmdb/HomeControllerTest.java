@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.junit.jupiter.api.BeforeAll;
 import javafx.scene.control.TextField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +16,22 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeControllerTest {
 
     private HomeController controller;
 
+    @BeforeAll
+    static void startup()
+    {
+        Platform.startup(() -> {
+        });
+    }
+
     @BeforeEach
     void setUp() {
         controller = new HomeController();
-        Platform.startup(() -> {
-        });
-
         controller.sortBtn = new JFXButton("Sort (asc)");
         controller.genreComboBox = new JFXComboBox<>();
         controller.searchField = new javafx.scene.control.TextField();
@@ -70,6 +76,18 @@ class HomeControllerTest {
         ObservableList<Movie> sortedMovies = controller.getObservableMovies();
         assertEquals("B Movie", sortedMovies.get(0).getTitle());
         assertEquals("A Movie", sortedMovies.get(1).getTitle());
+    }
+
+    @Test
+    void testFilterSpecificGenre() {
+        controller.filterSpecificGenre(controller.observableMovies, Genre.ACTION);
+        assertEquals(2, controller.observableMovies.size());
+    }
+
+    @Test
+    void testFilterAllGenre() {
+        assertTrue(controller.filterAllGenre(Genre.ALL, controller.allMovies));
+        assertEquals(3, controller.observableMovies.size());
     }
 
     @Test
