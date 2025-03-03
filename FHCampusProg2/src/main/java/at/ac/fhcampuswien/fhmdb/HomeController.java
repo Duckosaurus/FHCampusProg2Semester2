@@ -65,6 +65,7 @@ public class HomeController implements Initializable {
 
     }
 
+    //TODO: rename Method
     public void selectedGenre() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
 
