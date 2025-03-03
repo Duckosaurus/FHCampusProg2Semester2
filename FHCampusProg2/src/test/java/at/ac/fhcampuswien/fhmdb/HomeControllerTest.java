@@ -7,24 +7,21 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.junit.jupiter.api.BeforeAll;
 import javafx.scene.control.TextField;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class HomeControllerTest {
 
     private HomeController controller;
 
     @BeforeAll
-    static void startup()
-    {
+    static void startup() {
         Platform.startup(() -> {
         });
     }
@@ -34,7 +31,7 @@ class HomeControllerTest {
         controller = new HomeController();
         controller.sortBtn = new JFXButton("Sort (asc)");
         controller.genreComboBox = new JFXComboBox<>();
-        controller.searchField = new javafx.scene.control.TextField();
+        controller.searchField = new TextField();
 
         controller.genreComboBox.setItems(FXCollections.observableArrayList(Genre.values()));
 
@@ -91,12 +88,12 @@ class HomeControllerTest {
     }
 
     @Test
-    void testselectedGenre() {
+    void testSelectedGenre() {
         assertDoesNotThrow(() -> controller.selectedGenre());
     }
 
     @Test
-    void testsearchMoviesWithText() {
+    void testSearchMoviesWithText() {
         controller.searchField = new TextField("Batman");
         List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
         assertEquals(1, searchedMovieswithTextList.size());
