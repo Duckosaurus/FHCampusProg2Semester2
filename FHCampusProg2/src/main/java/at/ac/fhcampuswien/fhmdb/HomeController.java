@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable  {
     @FXML
     public JFXButton searchBtn;
 

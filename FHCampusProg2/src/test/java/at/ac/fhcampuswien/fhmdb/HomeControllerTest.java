@@ -4,8 +4,13 @@ import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXListView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,10 +23,11 @@ class HomeControllerTest {
 
     private HomeController controller;
 
-
     @BeforeEach
     void setUp() {
         controller = new HomeController();
+        Platform.startup(() -> {});
+
         controller.sortBtn = new JFXButton("Sort (asc)");
         controller.genreComboBox = new JFXComboBox<>();
         controller.searchField = new javafx.scene.control.TextField();
@@ -33,7 +39,6 @@ class HomeControllerTest {
                 new Movie("The Notebook", "Romantic movie", List.of(Genre.ROMANCE)),
                 new Movie("Spider-Man", "A web-slinger", List.of(Genre.ACTION))
         );
-
         controller.observableMovies.setAll(controller.allMovies);
     }
 
@@ -43,7 +48,7 @@ class HomeControllerTest {
                 new Movie("B Movie", "Description", List.of(Genre.ACTION)),
                 new Movie("A Movie", "Description", List.of(Genre.DRAMA))
         );
-
+        controller.observableMovies.setAll(controller.allMovies);
         controller.ascending = true;
         controller.sortMovies();
 
@@ -58,6 +63,7 @@ class HomeControllerTest {
                 new Movie("A Movie", "Description", List.of(Genre.DRAMA)),
                 new Movie("B Movie", "Description", List.of(Genre.ACTION))
         );
+        controller.observableMovies.setAll(controller.allMovies);
 
         controller.ascending = true;
         controller.sortMovies();
