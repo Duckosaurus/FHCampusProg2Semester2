@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HomeControllerTest {
@@ -70,5 +71,8 @@ class HomeControllerTest {
         assertEquals("A Movie", sortedMovies.get(1).getTitle());
     }
 
-
+    @Test
+    void testselectedGenre() {
+        assertDoesNotThrow(() -> controller.selectedGenre());
+    }
 }
