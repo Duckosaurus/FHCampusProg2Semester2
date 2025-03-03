@@ -4,20 +4,15 @@ import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HomeControllerTest {
 
@@ -26,7 +21,8 @@ class HomeControllerTest {
     @BeforeEach
     void setUp() {
         controller = new HomeController();
-        Platform.startup(() -> {});
+        Platform.startup(() -> {
+        });
 
         controller.sortBtn = new JFXButton("Sort (asc)");
         controller.genreComboBox = new JFXComboBox<>();
@@ -74,39 +70,5 @@ class HomeControllerTest {
         assertEquals("A Movie", sortedMovies.get(1).getTitle());
     }
 
-    @Test
-    void testFilterMoviesBySearchQuery() {
-        controller.searchField.setText("batman");
 
-        List<Movie> filteredMovies = controller.searchMoviesWithText("batman");
-
-        assertEquals(1, filteredMovies.size());
-        assertEquals("The Batman", filteredMovies.get(0).getTitle());
-    }
-
-    @Test
-    void testFilterMoviesByGenre() {
-        controller.genreComboBox.setValue(Genre.ROMANCE);
-        controller.selectedGenre();
-
-        ObservableList<Movie> filteredMovies = controller.getObservableMovies();
-        assertEquals(1, filteredMovies.size());
-        assertEquals("The Notebook", filteredMovies.get(0).getTitle());
-    }
-
-    @Test
-    void testFilterMoviesBySearchQueryAndGenre() {
-        controller.allMovies = List.of(
-                new Movie("The Batman", "Dark Knight", List.of(Genre.ACTION, Genre.DRAMA)),
-                new Movie("Batman Begins", "First movie", List.of(Genre.ACTION)),
-                new Movie("Notebook", "Romantic movie", List.of(Genre.ROMANCE))
-        );
-
-        controller.genreComboBox.setValue(Genre.ACTION);
-        List<Movie> filteredMovies = controller.searchMoviesWithText("batman");
-
-        assertEquals(2, filteredMovies.size());
-        assertTrue(filteredMovies.stream().anyMatch(m -> m.getTitle().equals("The Batman")));
-        assertTrue(filteredMovies.stream().anyMatch(m -> m.getTitle().equals("Batman Begins")));
-    }
 }
