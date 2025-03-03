@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -74,5 +75,13 @@ class HomeControllerTest {
     @Test
     void testselectedGenre() {
         assertDoesNotThrow(() -> controller.selectedGenre());
+    }
+
+    @Test
+    void testsearchMoviesWithText() {
+        controller.searchField = new TextField("Batman");
+        List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
+        assertEquals(1, searchedMovieswithTextList.size());
+        assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
     }
 }
