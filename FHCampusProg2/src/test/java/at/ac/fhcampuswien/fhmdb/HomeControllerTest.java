@@ -100,7 +100,39 @@ class HomeControllerTest {
 
     @Test
     void testSearchMoviesWithText() {
-        controller.searchField = new TextField("Batman");
+        controller.searchField = new TextField("The Batman");
+        List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
+        assertEquals(1, searchedMovieswithTextList.size());
+        assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
+    }
+
+    @Test
+    void testSearchMoviesWithPartialText() {
+        controller.searchField = new TextField("bat");
+        List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
+        assertEquals(1, searchedMovieswithTextList.size());
+        assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
+    }
+
+    @Test
+    void testSearchMoviesWithNonExistingText() {
+        controller.searchField = new TextField("tzujz");
+        List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
+        assertEquals(0, searchedMovieswithTextList.size());
+    }
+
+    @Test
+    void testSearchMoviesWithPartialDescription() {
+        controller.searchField = new TextField("knight");
+        List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
+        assertEquals(1, searchedMovieswithTextList.size());
+        assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
+    }
+
+    @Test
+    void filterSpecificGenreAndText() {
+        controller.searchField = new TextField("bat");
+        controller.genreComboBox.setValue(Genre.ACTION);
         List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
         assertEquals(1, searchedMovieswithTextList.size());
         assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
