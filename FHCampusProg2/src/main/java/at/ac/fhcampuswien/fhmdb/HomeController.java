@@ -35,8 +35,8 @@ public class HomeController implements Initializable {
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    private boolean ascending = true;
+    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    public boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -81,7 +81,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(allMoviesSearched);
         sortMovies();
     }
-    
+
     public boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
         if (selectedGenre == Genre.ALL) {
             observableMovies.setAll(allMoviesSearched);
@@ -102,7 +102,6 @@ public class HomeController implements Initializable {
         return allMovies;
     }
 
-
     public void sortMovies() {
         Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
         if (!ascending) {
@@ -111,5 +110,9 @@ public class HomeController implements Initializable {
         observableMovies.sort(comparator);
         ascending = !ascending;
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
+    }
+
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
     }
 }
