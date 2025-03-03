@@ -93,6 +93,12 @@ class HomeControllerTest {
     }
 
     @Test
+    void testSelectedGenreALL() {
+        controller.genreComboBox.setValue(Genre.ALL);
+        assertDoesNotThrow(() -> controller.selectedGenre());
+    }
+
+    @Test
     void testSearchMoviesWithText() {
         controller.searchField = new TextField("Batman");
         List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
