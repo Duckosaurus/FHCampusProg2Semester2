@@ -28,15 +28,15 @@ public class HomeController implements Initializable {
     public JFXListView movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox<Genre> genreComboBox;
 
     @FXML
     public JFXButton sortBtn;
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    private boolean ascending = true;
+    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    public boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -74,6 +74,7 @@ public class HomeController implements Initializable {
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
 
+
     public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
         allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
@@ -101,6 +102,13 @@ public class HomeController implements Initializable {
         }
         return allMovies;
     }
+    // Method for testing purposes
+    public List<Movie> searchMoviesWithText(String query) {
+        return allMovies.stream()
+                .filter(movie -> movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                        movie.getDescription().toLowerCase().contains(query.toLowerCase()))
+                .toList();
+    }
 
 
     public void sortMovies() {
@@ -111,5 +119,9 @@ public class HomeController implements Initializable {
         observableMovies.sort(comparator);
         ascending = !ascending;
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
+    }
+
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
     }
 }
