@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable  {
+public class HomeController implements Initializable {
     @FXML
     public JFXButton searchBtn;
 
@@ -73,8 +73,7 @@ public class HomeController implements Initializable  {
 
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
-
-
+    
     public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
         allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
@@ -82,7 +81,7 @@ public class HomeController implements Initializable  {
         observableMovies.setAll(allMoviesSearched);
         sortMovies();
     }
-    
+
     public boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
         if (selectedGenre == Genre.ALL) {
             observableMovies.setAll(allMoviesSearched);
@@ -102,14 +101,6 @@ public class HomeController implements Initializable  {
         }
         return allMovies;
     }
-    // Method for testing purposes
-    public List<Movie> searchMoviesWithText(String query) {
-        return allMovies.stream()
-                .filter(movie -> movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                        movie.getDescription().toLowerCase().contains(query.toLowerCase()))
-                .toList();
-    }
-
 
     public void sortMovies() {
         Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
