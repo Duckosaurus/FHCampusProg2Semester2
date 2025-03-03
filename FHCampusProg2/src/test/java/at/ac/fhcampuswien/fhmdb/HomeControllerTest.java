@@ -22,22 +22,18 @@ class HomeControllerTest {
     @BeforeEach
     void setUp() {
         controller = new HomeController();
-
-        // ✅ Manually initialize UI components to prevent NullPointerException
         controller.sortBtn = new JFXButton("Sort (asc)");
         controller.genreComboBox = new JFXComboBox<>();
         controller.searchField = new javafx.scene.control.TextField();
 
         controller.genreComboBox.setItems(FXCollections.observableArrayList(Genre.values()));
 
-        // ✅ Initialize movie list
         controller.allMovies = List.of(
                 new Movie("The Batman", "Dark Knight", List.of(Genre.ACTION)),
                 new Movie("The Notebook", "Romantic movie", List.of(Genre.ROMANCE)),
                 new Movie("Spider-Man", "A web-slinger", List.of(Genre.ACTION))
         );
 
-        // ✅ Initialize observableMovies list
         controller.observableMovies.setAll(controller.allMovies);
     }
 
