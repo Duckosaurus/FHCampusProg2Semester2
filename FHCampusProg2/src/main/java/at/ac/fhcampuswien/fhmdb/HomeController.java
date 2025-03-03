@@ -28,7 +28,7 @@ public class HomeController implements Initializable {
     public JFXListView movieListView;
 
     @FXML
-    public JFXComboBox<Genre> genreComboBox;
+    public JFXComboBox genreComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -73,7 +73,7 @@ public class HomeController implements Initializable {
 
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
-    
+
     public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
         allMoviesSearched = allMoviesSearched.stream()
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
