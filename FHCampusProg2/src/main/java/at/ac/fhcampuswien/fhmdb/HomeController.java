@@ -11,11 +11,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-
+import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
     @FXML
@@ -29,7 +27,10 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXComboBox genreComboBox;
-
+    @FXML
+    public TextField releaseYearComboBox;
+    @FXML
+    public JFXComboBox ratingComboBox;
     @FXML
     public JFXButton sortBtn;
 
@@ -40,16 +41,9 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
-
-        // initialize UI stuff
-        movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
-
+        loadMoviesFromApi();
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
-        sortMovies();
-
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -60,9 +54,30 @@ public class HomeController implements Initializable {
             }
         });
         searchBtn.setOnAction(actionEvent -> {
-            selectedGenre();
+            loadMoviesFromApi();
         });
+    }
+    private void loadMoviesFromApi() {
+        new Thread(() -> {
+            List<Movie> moviesFromApi = null;
+            try
+            {
+                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre)genreComboBox.getValue(), null, null);
+                if (moviesFromApi != null) {
+                    List<Movie> finalMoviesFromApi = moviesFromApi;
+                    javafx.application.Platform.runLater(() -> {
+                        observableMovies.setAll(finalMoviesFromApi);
+                        movieListView.setItems(observableMovies);
+                        movieListView.setCellFactory(movieListView -> new MovieCell());
+                    });
+                }
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
 
+        }).start();
     }
 
     //TODO: rename Method

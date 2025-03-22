@@ -7,12 +7,60 @@ public class Movie {
     private String title;
     private String description;
     private List<Genre> genres;
+    private List<String> mainCast;
+    private String director;
+    private int releaseYear;
+    private double rating;
 
 
     public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
         this.description = description;
         this.genres = genres;
+        this.mainCast = mainCast;
+        this.director = director;
+        this.releaseYear = releaseYear;
+        this.rating = rating;
+    }
+
+    public List<String> getMainCast()
+    {
+        return mainCast;
+    }
+
+    public void setMainCast(List<String> mainCast)
+    {
+        this.mainCast = mainCast;
+    }
+
+    public String getDirector()
+    {
+        return director;
+    }
+
+    public void setDirector(String director)
+    {
+        this.director = director;
+    }
+
+    public int getReleaseYear()
+    {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear)
+    {
+        this.releaseYear = releaseYear;
+    }
+
+    public double getRating()
+    {
+        return rating;
+    }
+
+    public void setRating(double rating)
+    {
+        this.rating = rating;
     }
 
     public String getTitle() {
