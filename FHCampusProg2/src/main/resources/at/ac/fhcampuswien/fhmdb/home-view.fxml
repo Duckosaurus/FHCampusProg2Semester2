@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
-<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -32,9 +30,11 @@
             <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)"
                        minWidth="80"/>
             <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb"/>
-            <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css"/>
-            <TextField fx:id="releaseYearComboBox" styleClass="filter-combo-box" stylesheets="@styles.css"/>
-            <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css"/>
+            <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box"
+                         stylesheets="@styles.css"/>
+            <JFXComboBox fx:id="releaseYearComboBox" styleClass="filter-combo-box" stylesheets="@styles.css"/>
+            <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box"
+                         stylesheets="@styles.css"/>
 
             <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Filter"/>
         </children>

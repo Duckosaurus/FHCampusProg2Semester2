@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +54,7 @@ class HomeControllerTest {
         controller.ascending = true;
         controller.sortMovies();
 
-        ObservableList<Movie> sortedMovies = controller.getObservableMovies();
+        ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("A Movie", sortedMovies.get(0).getTitle());
         assertEquals("B Movie", sortedMovies.get(1).getTitle());
     }
@@ -130,11 +131,23 @@ class HomeControllerTest {
     }
 
     @Test
-    void filterSpecificGenreAndText() {
+    void testfilterSpecificGenreAndText() {
         controller.searchField = new TextField("bat");
         controller.genreComboBox.setValue(Genre.ACTION);
         List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
         assertEquals(1, searchedMovieswithTextList.size());
         assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
+    }
+
+    @Test
+    void testgetMostPopularActor() throws IOException {
+
+        List<Movie> movieslist = MovieAPI.fetchMovies(null, Genre.ALL, null, null);
+        String erg = controller.getMostPopularActor(movieslist);
+
+        System.out.println(erg);
+
+        assertEquals("Leonardo DiCaprio", erg);
+
     }
 }

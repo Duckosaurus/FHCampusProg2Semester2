@@ -14,14 +14,10 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
-    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     @FXML
     public JFXButton searchBtn;
     @FXML
@@ -31,12 +27,13 @@ public class HomeController implements Initializable {
     @FXML
     public JFXComboBox genreComboBox;
     @FXML
-    public TextField releaseYearComboBox;
+    public JFXComboBox releaseYearComboBox;
     @FXML
     public JFXComboBox ratingComboBox;
     @FXML
     public JFXButton sortBtn;
-    public List<Movie> allMovies = Movie.initializeMovies();
+    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
 
     @Override
@@ -44,6 +41,9 @@ public class HomeController implements Initializable {
         loadMoviesFromApi();
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
+        releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
+                .sorted().toList());
+//        releaseYearComboBox.getSelectionModel().selectFirst();
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -69,6 +69,7 @@ public class HomeController implements Initializable {
                         observableMovies.setAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
                         movieListView.setCellFactory(movieListView -> new MovieCell());
+                        allMovies.addAll(finalMoviesFromApi);
                     });
                 }
             } catch (IOException e) {
@@ -126,16 +127,12 @@ public class HomeController implements Initializable {
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
     }
 
-    public ObservableList<Movie> getObservableMovies() {
-        return observableMovies;
-    }
-
     public String getMostPopularActor(List<Movie> movies) {
-
         return movies.stream().flatMap(movie -> movie.getMainCast().stream())
                 .collect(Collectors.groupingBy(name -> name, Collectors.counting()))
                 .entrySet().stream().max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey).orElse("Es gibt keinen häufigsten");
     }
+
 
 }
