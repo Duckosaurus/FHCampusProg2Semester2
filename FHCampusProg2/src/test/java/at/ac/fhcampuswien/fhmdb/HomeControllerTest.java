@@ -70,7 +70,7 @@ class HomeControllerTest {
         controller.sortMovies();
         controller.sortMovies();
 
-        ObservableList<Movie> sortedMovies = controller.getObservableMovies();
+        ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("B Movie", sortedMovies.get(0).getTitle());
         assertEquals("A Movie", sortedMovies.get(1).getTitle());
     }

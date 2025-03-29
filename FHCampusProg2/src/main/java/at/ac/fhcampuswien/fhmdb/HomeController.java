@@ -11,20 +11,23 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
+    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     @FXML
     public JFXButton searchBtn;
-
     @FXML
     public TextField searchField;
-
     @FXML
     public JFXListView movieListView;
-
     @FXML
     public JFXComboBox genreComboBox;
     @FXML
@@ -33,10 +36,7 @@ public class HomeController implements Initializable {
     public JFXComboBox ratingComboBox;
     @FXML
     public JFXButton sortBtn;
-
     public List<Movie> allMovies = Movie.initializeMovies();
-
-    public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public boolean ascending = true;
 
     @Override
@@ -57,12 +57,12 @@ public class HomeController implements Initializable {
             loadMoviesFromApi();
         });
     }
+
     private void loadMoviesFromApi() {
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
-            try
-            {
-                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre)genreComboBox.getValue(), null, null);
+            try {
+                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), null, null);
                 if (moviesFromApi != null) {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
@@ -71,9 +71,7 @@ public class HomeController implements Initializable {
                         movieListView.setCellFactory(movieListView -> new MovieCell());
                     });
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
@@ -131,4 +129,13 @@ public class HomeController implements Initializable {
     public ObservableList<Movie> getObservableMovies() {
         return observableMovies;
     }
+
+    public String getMostPopularActor(List<Movie> movies) {
+
+        return movies.stream().flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(name -> name, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("Es gibt keinen häufigsten");
+    }
+
 }
