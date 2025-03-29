@@ -172,5 +172,26 @@ class HomeControllerTest {
         assertEquals(2, erg);
     }
 
-    
+
+    @Test
+    void testGetMoviesBetweenYears() {
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2009, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2010, 8),
+                new Movie("Movie D", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2020, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2008, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2011, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION))
+        );
+        List<Movie> erg = controller.getMoviesBetweenYears(movieList, 2009, 2010);
+
+        assertEquals(2, erg.size());
+
+
+    }
 }
