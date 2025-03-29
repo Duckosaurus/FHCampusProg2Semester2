@@ -141,13 +141,21 @@ class HomeControllerTest {
 
     @Test
     void testgetMostPopularActor() throws IOException {
-
         List<Movie> movieslist = MovieAPI.fetchMovies(null, Genre.ALL, null, null);
         String erg = controller.getMostPopularActor(movieslist);
-
         System.out.println(erg);
-
         assertEquals("Leonardo DiCaprio", erg);
-
     }
+
+    @Test
+    void testTrueGetLongestMovieTitle() {
+        List<Movie> movieList = List.of(
+                new Movie("LangerMovie", "Description", List.of(Genre.DRAMA)),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION))
+        );
+
+        int erg = controller.getLongestMovieTitle(movieList);
+        assertEquals(11, erg);
+    }
+    
 }

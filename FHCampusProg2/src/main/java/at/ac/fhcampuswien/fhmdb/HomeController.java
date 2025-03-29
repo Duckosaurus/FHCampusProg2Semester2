@@ -134,5 +134,11 @@ public class HomeController implements Initializable {
                 .map(Map.Entry::getKey).orElse("Es gibt keinen häufigsten");
     }
 
-
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .map(Movie::getTitle)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+    }
 }
