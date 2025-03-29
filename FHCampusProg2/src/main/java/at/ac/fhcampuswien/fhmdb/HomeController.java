@@ -141,4 +141,8 @@ public class HomeController implements Initializable {
                 .max()
                 .orElse(0);
     }
+
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream().filter(x -> x.getDirector() == director).count();
+    }
 }
