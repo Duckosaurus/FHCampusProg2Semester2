@@ -11,32 +11,29 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
     public JFXButton searchBtn;
-
     @FXML
     public TextField searchField;
-
     @FXML
     public JFXListView movieListView;
-
     @FXML
     public JFXComboBox genreComboBox;
     @FXML
-    public TextField releaseYearComboBox;
+    public JFXComboBox releaseYearComboBox;
     @FXML
     public JFXComboBox ratingComboBox;
     @FXML
     public JFXButton sortBtn;
-
-    public List<Movie> allMovies = Movie.initializeMovies();
-
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
 
     @Override
@@ -44,6 +41,9 @@ public class HomeController implements Initializable {
         loadMoviesFromApi();
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
+        releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
+                .sorted().toList());
+//        releaseYearComboBox.getSelectionModel().selectFirst();
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -57,23 +57,22 @@ public class HomeController implements Initializable {
             loadMoviesFromApi();
         });
     }
+
     private void loadMoviesFromApi() {
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
-            try
-            {
-                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre)genreComboBox.getValue(), null, null);
+            try {
+                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), null, null);
                 if (moviesFromApi != null) {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
                         observableMovies.setAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
                         movieListView.setCellFactory(movieListView -> new MovieCell());
+                        allMovies.addAll(finalMoviesFromApi);
                     });
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
@@ -128,7 +127,26 @@ public class HomeController implements Initializable {
         sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
     }
 
-    public ObservableList<Movie> getObservableMovies() {
-        return observableMovies;
+    public String getMostPopularActor(List<Movie> movies) {
+        return movies.stream().flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(name -> name, Collectors.counting()))
+                .entrySet().stream().max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("Es gibt keinen häufigsten");
+    }
+
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .map(Movie::getTitle)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+    }
+
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream().filter(x -> x.getDirector() == director).count();
+    }
+
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        return movies.stream().filter(x -> x.getReleaseYear() >= startYear && x.getReleaseYear() <= endYear).collect(Collectors.toList());
     }
 }

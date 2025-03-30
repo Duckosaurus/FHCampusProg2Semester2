@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +54,7 @@ class HomeControllerTest {
         controller.ascending = true;
         controller.sortMovies();
 
-        ObservableList<Movie> sortedMovies = controller.getObservableMovies();
+        ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("A Movie", sortedMovies.get(0).getTitle());
         assertEquals("B Movie", sortedMovies.get(1).getTitle());
     }
@@ -70,7 +71,7 @@ class HomeControllerTest {
         controller.sortMovies();
         controller.sortMovies();
 
-        ObservableList<Movie> sortedMovies = controller.getObservableMovies();
+        ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("B Movie", sortedMovies.get(0).getTitle());
         assertEquals("A Movie", sortedMovies.get(1).getTitle());
     }
@@ -130,11 +131,67 @@ class HomeControllerTest {
     }
 
     @Test
-    void filterSpecificGenreAndText() {
+    void testfilterSpecificGenreAndText() {
         controller.searchField = new TextField("bat");
         controller.genreComboBox.setValue(Genre.ACTION);
         List<Movie> searchedMovieswithTextList = controller.searchMoviesWithText();
         assertEquals(1, searchedMovieswithTextList.size());
         assertEquals("The Batman", searchedMovieswithTextList.get(0).getTitle());
+    }
+
+    @Test
+    void testgetMostPopularActor() throws IOException {
+        List<Movie> movieslist = MovieAPI.fetchMovies(null, Genre.ALL, null, null);
+        String erg = controller.getMostPopularActor(movieslist);
+        System.out.println(erg);
+        assertEquals("Leonardo DiCaprio", erg);
+    }
+
+    @Test
+    void testTrueGetLongestMovieTitle() {
+        List<Movie> movieList = List.of(
+                new Movie("LangerMovie", "Description", List.of(Genre.DRAMA)),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION))
+        );
+        int erg = controller.getLongestMovieTitle(movieList);
+        assertEquals(11, erg);
+    }
+
+    @Test
+    void testTruecountMoviesFrom() {
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2010, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2010, 8),
+                new Movie("Movie D", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2010, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION))
+        );
+        long erg = controller.countMoviesFrom(movieList, "Super");
+        assertEquals(2, erg);
+    }
+
+
+    @Test
+    void testGetMoviesBetweenYears() {
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2009, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2010, 8),
+                new Movie("Movie D", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2020, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2008, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast1", "Cast2"), "NichtSuper", 2011, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION))
+        );
+        List<Movie> erg = controller.getMoviesBetweenYears(movieList, 2009, 2010);
+
+        assertEquals(2, erg.size());
+
+
     }
 }
