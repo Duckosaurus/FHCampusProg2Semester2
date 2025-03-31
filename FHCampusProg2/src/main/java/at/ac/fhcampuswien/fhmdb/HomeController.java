@@ -86,7 +86,8 @@ public class HomeController implements Initializable {
                     });
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                observableMovies.clear();
+                movieListView.setItems(observableMovies);
             }
 
         }).start();
