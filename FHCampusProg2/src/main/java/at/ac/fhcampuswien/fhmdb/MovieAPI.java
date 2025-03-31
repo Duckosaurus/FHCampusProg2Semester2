@@ -12,13 +12,13 @@ public class MovieAPI
     private static final String BASE_URL = "https://prog2.fh-campuswien.ac.at/movies";
     private static final OkHttpClient client = new OkHttpClient();
 
-    public static List<Movie> fetchMovies(String query, Genre genre, Integer releaseYear, Double ratingFrom) throws IOException {
+    public static List<Movie> fetchMovies() throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
-        if (query != null && !query.isEmpty()) urlBuilder.addQueryParameter("query", query);
-        if (genre != null && !genre.name().equals("ALL")) urlBuilder.addQueryParameter("genre", genre.name());
-        if (releaseYear != null) urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
-        if (ratingFrom != null) urlBuilder.addQueryParameter("ratingFrom", ratingFrom.toString());
+//        if (query != null && !query.isEmpty()) urlBuilder.addQueryParameter("query", query);
+//        if (genre != null && !genre.name().equals("ALL")) urlBuilder.addQueryParameter("genre", genre.name());
+//        if (releaseYear != null) urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
+        //if (ratingFrom != null) urlBuilder.addQueryParameter("ratingFrom", ratingFrom.toString());
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build().toString())

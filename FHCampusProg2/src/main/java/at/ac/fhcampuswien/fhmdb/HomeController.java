@@ -42,8 +42,8 @@ public class HomeController implements Initializable {
 
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
-        releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
-                .sorted().toList());
+//        releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
+//                .sorted().toList());
         ratingComboBox.getItems().add("Filter by Rating");
         int[] ratingsNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         for (var item : ratingsNumbers) {
@@ -68,7 +68,7 @@ public class HomeController implements Initializable {
             }
         });
         searchBtn.setOnAction(actionEvent -> {
-            loadMoviesFromApi();
+            selectedGenre();
         });
 
     }
@@ -77,19 +77,7 @@ public class HomeController implements Initializable {
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
-                Integer releaseYear = null;
-                Double rating = null;
-                if (!releaseYearComboBox.getValue().equals("Filter by Release Year")) {
-                    releaseYear = (int) releaseYearComboBox.getValue();
-                }
-                if (ratingComboBox.getValue() != "Filter by Rating") {
-                    rating = (double) ratingComboBox.getValue();
-                }
-
-                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(),
-                        releaseYear, rating);
-
-
+                moviesFromApi = MovieAPI.fetchMovies();
                 if (moviesFromApi != null) {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
@@ -108,11 +96,19 @@ public class HomeController implements Initializable {
     //TODO: rename Method
     public void selectedGenre() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
-
+//        if(ratingComboBox.getValue() != "Filter by Rating") {
+//            allMoviesSearched = allMoviesSearched
+//        }
+        if(releaseYearComboBox.getValue() != "Filter by Release Year") {
+            allMoviesSearched = allMoviesSearched.stream().filter(x -> x.getReleaseYear() == (int)releaseYearComboBox.getValue()).toList();
+        }
+        else
+            observableMovies.setAll(allMoviesSearched);
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
 
         filterSpecificGenre(allMoviesSearched, selectedGenre);
+
     }
 
     public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
