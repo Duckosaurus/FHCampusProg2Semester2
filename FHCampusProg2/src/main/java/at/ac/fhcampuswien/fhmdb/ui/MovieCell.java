@@ -17,7 +17,7 @@ public class MovieCell extends ListCell<Movie> {
     private final Label detail = new Label();
     private final Label genres = new Label();
     private final VBox layout = new VBox(title, detail, genres);
-    
+
     @Override
     protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);
@@ -41,6 +41,7 @@ public class MovieCell extends ListCell<Movie> {
 
                 genres.setText(formattedGenres);
                 genres.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: #D3D3D3;");
+
             } else {
                 genres.setText("No genres available");
             }

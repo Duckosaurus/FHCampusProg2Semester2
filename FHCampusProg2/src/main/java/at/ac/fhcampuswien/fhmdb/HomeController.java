@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,7 +35,6 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
 
     @Override
@@ -44,7 +44,19 @@ public class HomeController implements Initializable {
         genreComboBox.getSelectionModel().selectFirst();
         releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
                 .sorted().toList());
-//        releaseYearComboBox.getSelectionModel().selectFirst();
+        ratingComboBox.getItems().add("Filter by Rating");
+        int[] ratingsNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        for (var item : ratingsNumbers) {
+            ratingComboBox.getItems().add(item);
+        }
+        ratingComboBox.getSelectionModel().selectFirst();
+
+        releaseYearComboBox.getItems().add("Filter by Release Year");
+        for (int i = 1950; i <= LocalDate.now().getYear(); i++) {
+            releaseYearComboBox.getItems().add(i);
+        }
+
+        releaseYearComboBox.getSelectionModel().selectFirst();
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -70,7 +82,6 @@ public class HomeController implements Initializable {
                         observableMovies.setAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
                         movieListView.setCellFactory(movieListView -> new MovieCell());
-                        allMovies.addAll(finalMoviesFromApi);
                     });
                 }
             } catch (IOException e) {
@@ -110,12 +121,12 @@ public class HomeController implements Initializable {
     public List<Movie> searchMoviesWithText() {
         String query = searchField.getText().toLowerCase().trim();
         if (!query.isEmpty()) {
-            List<Movie> allMoviesSearched = allMovies.stream()
+            List<Movie> allMoviesSearched = observableMovies.stream()
                     .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
                             movie.getDescription().toLowerCase().contains(query)).toList();
             return allMoviesSearched;
         }
-        return allMovies;
+        return observableMovies;
     }
 
     public void sortMovies() {
