@@ -35,16 +35,13 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    private List<Movie> allMovies = new ArrayList<>();
+    public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
-//        releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
-//                .sorted().toList());
         ratingComboBox.getItems().add("Filter by Rating");
         int[] ratingsNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         for (var item : ratingsNumbers) {
@@ -59,6 +56,7 @@ public class HomeController implements Initializable {
 
         releaseYearComboBox.getSelectionModel().selectFirst();
         loadMoviesFromApi();
+        sortMovies();
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
@@ -70,6 +68,7 @@ public class HomeController implements Initializable {
         });
         searchBtn.setOnAction(actionEvent -> {
             search();
+            sortMovies();
         });
 
     }
@@ -97,18 +96,27 @@ public class HomeController implements Initializable {
 
     public void search() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
-//        if(ratingComboBox.getValue() != "Filter by Rating") {
-//            allMoviesSearched = allMoviesSearched
-//        }
+        if (ratingComboBox.getValue() != "Filter by Rating") {
+            allMoviesSearched = filterMoviesByRating(allMoviesSearched, (int) ratingComboBox.getValue());
+        }
         if (releaseYearComboBox.getValue() != "Filter by Release Year") {
-            allMoviesSearched = allMoviesSearched.stream().filter(x -> x.getReleaseYear() == (int) releaseYearComboBox.getValue()).toList();
-        } else
-            observableMovies.setAll(allMoviesSearched);
+            allMoviesSearched = allMoviesSearched.stream()
+                    .filter(x -> x.getReleaseYear() == (int) releaseYearComboBox.getValue()).toList();
+        }
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
 
         filterSpecificGenre(allMoviesSearched, selectedGenre);
 
+    }
+
+    public List<Movie> filterMoviesByRating(List<Movie> allMovies, int selectedRating) {
+        double lowerBound = selectedRating;
+        double upperBound = selectedRating + 0.9;
+
+        return allMovies.stream()
+                .filter(movie -> movie.getRating() >= lowerBound && movie.getRating() < upperBound)
+                .collect(Collectors.toList());
     }
 
     public void filterSpecificGenre(List<Movie> allMoviesSearched, Genre selectedGenre) {
