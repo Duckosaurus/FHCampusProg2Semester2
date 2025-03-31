@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -128,10 +129,23 @@ public class HomeController implements Initializable {
     }
 
     public String getMostPopularActor(List<Movie> movies) {
-        return movies.stream().flatMap(movie -> movie.getMainCast().stream())
-                .collect(Collectors.groupingBy(name -> name, Collectors.counting()))
-                .entrySet().stream().max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey).orElse("Es gibt keinen häufigsten");
+        Map<String, Long> counts = movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        Optional<Map.Entry<String, Long>> maxEntry = counts.entrySet().stream()
+                .max(Map.Entry.comparingByValue());
+
+        if (maxEntry.isPresent()) {
+            long maxCount = maxEntry.get().getValue();
+            long numberOfMax = counts.values().stream()
+                    .filter(count -> count.equals(maxCount))
+                    .count();
+            if (numberOfMax == 1) {
+                return maxEntry.get().getKey();
+            }
+        }
+        return "Es gibt keinen häufigsten";
     }
 
     public int getLongestMovieTitle(List<Movie> movies) {

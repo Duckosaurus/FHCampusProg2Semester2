@@ -141,10 +141,51 @@ class HomeControllerTest {
 
     @Test
     void testgetMostPopularActor() throws IOException {
-        List<Movie> movieslist = MovieAPI.fetchMovies(null, Genre.ALL, null, null);
-        String erg = controller.getMostPopularActor(movieslist);
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2009, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast3", "Cast4"), "Super", 2010, 8),
+                new Movie("Movie D", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast5", "Cast1"), "NichtSuper", 2020, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast2", "Cast1"), "NichtSuper", 2008, 8),
+                new Movie("B Movie", "Description", List.of(Genre.ACTION),
+                        List.of("Cast9", "Cast8"), "NichtSuper", 2011, 8)
+        );
+        String erg = controller.getMostPopularActor(movieList);
         System.out.println(erg);
-        assertEquals("Leonardo DiCaprio", erg);
+        assertEquals("Cast1", erg);
+    }
+
+    @Test
+    void testNoResultgetMostPopularActor() throws IOException {
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2009, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast3", "Cast4"), "Super", 2010, 8)
+        );
+        String erg = controller.getMostPopularActor(movieList);
+        System.out.println(erg);
+        assertEquals("Es gibt keinen häufigsten", erg);
+    }
+
+    @Test
+    void testNoResultManygetMostPopularActor() throws IOException {
+        List<Movie> movieList = List.of(
+                new Movie("Movie A", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2009, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast3", "Cast4"), "Super", 2010, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast1", "Cast2"), "Super", 2010, 8),
+                new Movie("Movie C", "Description", List.of(Genre.DRAMA),
+                        List.of("Cast3", "Cast4"), "Super", 2010, 8)
+        );
+        String erg = controller.getMostPopularActor(movieList);
+        System.out.println(erg);
+        assertEquals("Es gibt keinen häufigsten", erg);
     }
 
     @Test
