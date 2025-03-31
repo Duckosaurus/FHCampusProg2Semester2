@@ -89,14 +89,14 @@ class HomeControllerTest {
     }
 
     @Test
-    void testSelectedGenre() {
-        assertDoesNotThrow(() -> controller.selectedGenre());
+    void testSearch() {
+        assertDoesNotThrow(() -> controller.search());
     }
 
     @Test
-    void testSelectedGenreALL() {
+    void testSearchALL() {
         controller.genreComboBox.setValue(Genre.ALL);
-        assertDoesNotThrow(() -> controller.selectedGenre());
+        assertDoesNotThrow(() -> controller.search());
     }
 
     @Test

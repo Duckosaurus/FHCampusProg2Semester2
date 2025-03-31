@@ -35,6 +35,7 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
 
     @Override
@@ -68,7 +69,7 @@ public class HomeController implements Initializable {
             }
         });
         searchBtn.setOnAction(actionEvent -> {
-            selectedGenre();
+            search();
         });
 
     }
@@ -82,6 +83,7 @@ public class HomeController implements Initializable {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
                         observableMovies.setAll(finalMoviesFromApi);
+                        allMovies.addAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
                         movieListView.setCellFactory(movieListView -> new MovieCell());
                     });
@@ -93,16 +95,14 @@ public class HomeController implements Initializable {
         }).start();
     }
 
-    //TODO: rename Method
-    public void selectedGenre() {
+    public void search() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
 //        if(ratingComboBox.getValue() != "Filter by Rating") {
 //            allMoviesSearched = allMoviesSearched
 //        }
-        if(releaseYearComboBox.getValue() != "Filter by Release Year") {
-            allMoviesSearched = allMoviesSearched.stream().filter(x -> x.getReleaseYear() == (int)releaseYearComboBox.getValue()).toList();
-        }
-        else
+        if (releaseYearComboBox.getValue() != "Filter by Release Year") {
+            allMoviesSearched = allMoviesSearched.stream().filter(x -> x.getReleaseYear() == (int) releaseYearComboBox.getValue()).toList();
+        } else
             observableMovies.setAll(allMoviesSearched);
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
@@ -131,12 +131,12 @@ public class HomeController implements Initializable {
     public List<Movie> searchMoviesWithText() {
         String query = searchField.getText().toLowerCase().trim();
         if (!query.isEmpty()) {
-            List<Movie> allMoviesSearched = observableMovies.stream()
+            List<Movie> allMoviesSearched = allMovies.stream()
                     .filter(movie -> movie.getTitle().toLowerCase().contains(query) ||
                             movie.getDescription().toLowerCase().contains(query)).toList();
             return allMoviesSearched;
         }
-        return observableMovies;
+        return allMovies;
     }
 
     public void sortMovies() {
