@@ -69,13 +69,26 @@ public class HomeController implements Initializable {
         searchBtn.setOnAction(actionEvent -> {
             loadMoviesFromApi();
         });
+
     }
 
     private void loadMoviesFromApi() {
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
-                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), null, null);
+                Integer releaseYear = null;
+                Double rating = null;
+                if (!releaseYearComboBox.getValue().equals("Filter by Release Year")) {
+                    releaseYear = (int) releaseYearComboBox.getValue();
+                }
+                if (ratingComboBox.getValue() != "Filter by Rating") {
+                    rating = (double) ratingComboBox.getValue();
+                }
+
+                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(),
+                        releaseYear, rating);
+
+
                 if (moviesFromApi != null) {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
