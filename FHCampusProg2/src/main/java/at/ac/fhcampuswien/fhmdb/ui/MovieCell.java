@@ -43,15 +43,13 @@ public class MovieCell extends ListCell<Movie> {
                         .collect(Collectors.joining(", "));
 
                 genres.setText(formattedGenres);
-                genres.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: #D3D3D3;");
 
             } else {
                 genres.setText("No genres available");
             }
             rating.setText("⭐ " + movie.getRating());
-
             releaseYear.setText("📅 " + movie.getReleaseYear());
-            // Farbgestaltung
+
             title.getStyleClass().add("text-yellow");
             detail.getStyleClass().add("text-white");
             genres.getStyleClass().add("text-gray");
@@ -60,9 +58,8 @@ public class MovieCell extends ListCell<Movie> {
 
             layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
 
-            // Layout-Anpassung
             title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-            genres.setStyle("-fx-font-size: 14px;");
+            genres.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: #D3D3D3;");
             rating.setStyle("-fx-font-size: 14px; -fx-text-fill: #00FF00;");
             releaseYear.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFD700;");
 
@@ -71,11 +68,9 @@ public class MovieCell extends ListCell<Movie> {
             layout.setPadding(new Insets(10));
             layout.setSpacing(5);
 
-            // ⬆️ HBox für Rating & ReleaseYear
             HBox extraInfo = new HBox(10, releaseYear, rating);
             extraInfo.setSpacing(20);
 
-            // Reihenfolge: Titel, Genres, Extra-Infos (Rating + Release), Detail
             layout.getChildren().setAll(title, genres, extraInfo, detail);
             setGraphic(layout);
         }

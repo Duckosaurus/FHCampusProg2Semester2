@@ -4,8 +4,7 @@ module at.ac.fhcampuswien.fhmdb {
     requires okhttp3;
     requires com.jfoenix;
     requires com.google.gson;
-    opens at.ac.fhcampuswien.fhmdb.models to com.google.gson; // Falls du Gson für JSON-Parsing nutzt
+    opens at.ac.fhcampuswien.fhmdb.models to com.google.gson;
 
-//    opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
     exports at.ac.fhcampuswien.fhmdb;
 }

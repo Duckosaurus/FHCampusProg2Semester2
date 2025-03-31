@@ -53,7 +53,6 @@ public class HomeController implements Initializable {
         for (int i = 1950; i <= LocalDate.now().getYear(); i++) {
             releaseYearComboBox.getItems().add(i);
         }
-
         releaseYearComboBox.getSelectionModel().selectFirst();
         loadMoviesFromApi();
         sortMovies();
@@ -70,14 +69,13 @@ public class HomeController implements Initializable {
             search();
             sortMovies();
         });
-
     }
 
     private void loadMoviesFromApi() {
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
-                moviesFromApi = MovieAPI.fetchMovies();
+                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
                 if (moviesFromApi != null) {
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
@@ -96,26 +94,20 @@ public class HomeController implements Initializable {
 
     public void search() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
-        if (ratingComboBox.getValue() != "Filter by Rating") {
+        if (ratingComboBox.getValue() != "Filter by Rating")
             allMoviesSearched = filterMoviesByRating(allMoviesSearched, (int) ratingComboBox.getValue());
-        }
         if (releaseYearComboBox.getValue() != "Filter by Release Year") {
             allMoviesSearched = allMoviesSearched.stream()
                     .filter(x -> x.getReleaseYear() == (int) releaseYearComboBox.getValue()).toList();
         }
         Genre selectedGenre = (Genre) genreComboBox.getValue();
         if (filterAllGenre(selectedGenre, allMoviesSearched)) return;
-
         filterSpecificGenre(allMoviesSearched, selectedGenre);
-
     }
 
     public List<Movie> filterMoviesByRating(List<Movie> allMovies, int selectedRating) {
-        double lowerBound = selectedRating;
-        double upperBound = selectedRating + 0.9;
-
         return allMovies.stream()
-                .filter(movie -> movie.getRating() >= lowerBound && movie.getRating() < upperBound)
+                .filter(movie -> movie.getRating() >= (double)selectedRating && movie.getRating() < ((double)selectedRating + 0.9))
                 .collect(Collectors.toList());
     }
 
