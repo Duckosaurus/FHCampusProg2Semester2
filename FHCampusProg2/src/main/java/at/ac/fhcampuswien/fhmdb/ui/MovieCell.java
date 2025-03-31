@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -16,6 +17,8 @@ public class MovieCell extends ListCell<Movie> {
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genres = new Label();
+    private final Label rating = new Label();
+    private final Label releaseYear = new Label();
     private final VBox layout = new VBox(title, detail, genres);
 
     @Override
@@ -45,18 +48,35 @@ public class MovieCell extends ListCell<Movie> {
             } else {
                 genres.setText("No genres available");
             }
-            // color scheme
+            rating.setText("⭐ " + movie.getRating());
+
+            releaseYear.setText("📅 " + movie.getReleaseYear());
+            // Farbgestaltung
             title.getStyleClass().add("text-yellow");
             detail.getStyleClass().add("text-white");
+            genres.getStyleClass().add("text-gray");
+            rating.getStyleClass().add("text-green");
+            releaseYear.getStyleClass().add("text-blue");
+
             layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
 
-            // layout
-            title.fontProperty().set(title.getFont().font(20));
-            detail.setMaxWidth(this.getScene().getWidth() - 30);
+            // Layout-Anpassung
+            title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+            genres.setStyle("-fx-font-size: 14px;");
+            rating.setStyle("-fx-font-size: 14px; -fx-text-fill: #00FF00;");
+            releaseYear.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFD700;");
+
             detail.setWrapText(true);
+            detail.setMaxWidth(this.getScene().getWidth() - 30);
             layout.setPadding(new Insets(10));
-            layout.spacingProperty().set(10);
-            layout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
+            layout.setSpacing(5);
+
+            // ⬆️ HBox für Rating & ReleaseYear
+            HBox extraInfo = new HBox(10, releaseYear, rating);
+            extraInfo.setSpacing(20);
+
+            // Reihenfolge: Titel, Genres, Extra-Infos (Rating + Release), Detail
+            layout.getChildren().setAll(title, genres, extraInfo, detail);
             setGraphic(layout);
         }
     }
