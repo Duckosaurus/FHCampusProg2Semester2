@@ -39,7 +39,7 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadMoviesFromApi();
+
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.getSelectionModel().selectFirst();
         releaseYearComboBox.getItems().addAll(observableMovies.stream().map(Movie::getReleaseYear)
@@ -57,6 +57,7 @@ public class HomeController implements Initializable {
         }
 
         releaseYearComboBox.getSelectionModel().selectFirst();
+        loadMoviesFromApi();
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortMovies();
