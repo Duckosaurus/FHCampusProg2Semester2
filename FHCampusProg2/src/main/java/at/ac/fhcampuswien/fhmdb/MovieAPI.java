@@ -18,7 +18,7 @@ public class MovieAPI
         if (query != null && !query.isEmpty()) urlBuilder.addQueryParameter("query", query);
         if (genre != null && !genre.name().equals("ALL")) urlBuilder.addQueryParameter("genre", genre.name());
         if (releaseYear != null && !releaseYear.equals("Filter by Release Year")) urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
-        if (rating != null && !rating.equals("Filter by Rating")) urlBuilder.addQueryParameter("rating", rating.toString());
+        if (rating != null && !rating.equals("Filter by Rating")) urlBuilder.addQueryParameter("ratingFrom", rating.toString());
 
         Request request = new Request.Builder()
                 .url(urlBuilder.build().toString())
