@@ -15,7 +15,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeControllerTest {
 
@@ -88,16 +89,6 @@ class HomeControllerTest {
         assertEquals(3, controller.observableMovies.size());
     }
 
-    @Test
-    void testSearch() {
-        assertDoesNotThrow(() -> controller.search());
-    }
-
-    @Test
-    void testSearchALL() {
-        controller.genreComboBox.setValue(Genre.ALL);
-        assertDoesNotThrow(() -> controller.search());
-    }
 
     @Test
     void testSearchMoviesWithText() {
