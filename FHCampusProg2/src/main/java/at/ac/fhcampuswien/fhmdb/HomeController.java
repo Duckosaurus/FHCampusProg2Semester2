@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -8,6 +9,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -37,6 +39,7 @@ public class HomeController implements Initializable {
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
+    //private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -184,5 +187,15 @@ public class HomeController implements Initializable {
 
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         return movies.stream().filter(x -> x.getReleaseYear() >= startYear && x.getReleaseYear() <= endYear).collect(Collectors.toList());
+    }
+
+    @FXML
+    private void navigateToHome(ActionEvent event) {
+        loadMoviesFromApi();  // Lädt die Filme von der API und zeigt sie im movieListView
+    }
+
+    @FXML
+    private void navigateToWatchlist(ActionEvent event) {
+        //loadMoviesFromWatchlist(); // NEUE Methode, die wir gleich schreiben
     }
 }

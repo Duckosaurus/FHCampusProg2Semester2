@@ -1,9 +1,12 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+//import com.j256.ormlite.field.DatabaseField;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Movie {
+    private long id;
     private String title;
     private String description;
     private List<Genre> genres;
@@ -11,8 +14,31 @@ public class Movie {
     private String director;
     private int releaseYear;
     private double rating;
+    public String imgUrl;
+    public int lengthInMinutes;
+    public String apiId;
 
+    public long getId()
+    {
+        return id;
+    }
 
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public Movie(long id, String apiId, String title, String description, int releaseYear, double rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
+        this.id = id;
+        this.apiId = apiId;
+        this.title = title;
+        this.description = description;
+        this.genres = genres;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.rating = rating;
+    }
     public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
         this.description = description;
@@ -22,7 +48,6 @@ public class Movie {
         this.releaseYear = releaseYear;
         this.rating = rating;
     }
-
     public Movie(String title, String description, List<Genre> genres, List<String> mainCast,
                  String director, int releaseYear, double rating) {
         this.title = title;
