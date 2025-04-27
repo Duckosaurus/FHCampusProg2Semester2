@@ -69,7 +69,7 @@ public class WatchlistRepository {
     public void removeFromWatchlist(UUID apiId) {
         try {
             DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where().eq("apiId", apiId);
+            deleteBuilder.where().eq("MovieId", apiId);
             deleteBuilder.delete();
         } catch (SQLException e) {
             throw new DatabaseException("Fehler beim Entfernen aus der Watchlist", e);
