@@ -15,10 +15,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.Scene;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -116,7 +117,8 @@ public class HomeController implements Initializable {
                     //TODO: Überprüfen ob die Id schon in der DB ist - bzw geht noch nd
                     MovieRepository movieRepo = new MovieRepository();
                     for (Movie movie : moviesFromApi) {
-                        if (movieRepo.findById(movie.getId()) == null) {
+                        var t = movieRepo.findById(movie.getId());
+                        if (t == null) {
                             movieRepo.save(movie);  // Film speichern, wenn noch nicht vorhanden
                         }
                     }

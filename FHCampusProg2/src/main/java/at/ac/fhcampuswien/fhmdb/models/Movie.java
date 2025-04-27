@@ -17,14 +17,9 @@ public class Movie {
     private Number rating;
     public String imgUrl;
     public int lengthInMinutes;
-    public long apiId;
 
     public UUID getId() {
         return id;
-    }
-
-    public long getApiId() {
-        return apiId;
     }
 
     public void setId(UUID id) {

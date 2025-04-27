@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "movies")
 public class MovieEntity {
-    @DatabaseField(generatedId = true)
+    @DatabaseField(id = true)
     public UUID id;
     @DatabaseField
     public String title;
