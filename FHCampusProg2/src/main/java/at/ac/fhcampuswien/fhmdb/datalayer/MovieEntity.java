@@ -40,7 +40,9 @@ public class MovieEntity {
         this.lengthInMinutes = movie.getLengthInMinutes();
         this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
     }
+public MovieEntity(){
 
+}
     public String genreToString(List<Genre> genres) {
         List<String> stringGenres = new ArrayList<String>();
         for (Genre genre : genres)
