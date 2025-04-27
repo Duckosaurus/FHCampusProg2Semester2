@@ -30,18 +30,6 @@ public class MovieEntity {
     @DatabaseField
     public double rating;
 
-    public MovieEntity(UUID id, long apiId, String title, String description, String genres,
-                       int releaseYear, String imgUrl, int lengthInMinutes, double rating) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.genres = genres;
-        this.releaseYear = releaseYear;
-        this.imgUrl = imgUrl;
-        this.lengthInMinutes = lengthInMinutes;
-        this.rating = rating;
-    }
-
     public MovieEntity(Movie movie) {
         this.id = movie.getId();
         this.title = movie.getTitle();
@@ -51,9 +39,6 @@ public class MovieEntity {
         this.imgUrl = movie.getImgUrl();
         this.lengthInMinutes = movie.getLengthInMinutes();
         this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
-    }
-
-    public MovieEntity() {
     }
 
     public String genreToString(List<Genre> genres) {
@@ -92,6 +77,4 @@ public class MovieEntity {
                 })
                 .collect(Collectors.toList());  // Sammle alle zurückgegebenen Movie-Objekte in einer neuen List<Movie>
     }
-
-
 }

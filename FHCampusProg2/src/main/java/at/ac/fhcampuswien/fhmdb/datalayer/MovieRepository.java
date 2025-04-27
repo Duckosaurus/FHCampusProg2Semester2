@@ -88,6 +88,4 @@ public class MovieRepository {
             dao.createOrUpdate(movieEntity);  // Speichern oder aktualisieren
         }
     }
-
-
 }

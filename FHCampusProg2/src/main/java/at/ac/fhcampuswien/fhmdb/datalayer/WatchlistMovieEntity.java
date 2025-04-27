@@ -26,8 +26,4 @@ public class WatchlistMovieEntity {
         return movieId;
     }
 
-    public void setMovieId(UUID movieId) {
-        this.movieId = movieId;
-    }
-
 }

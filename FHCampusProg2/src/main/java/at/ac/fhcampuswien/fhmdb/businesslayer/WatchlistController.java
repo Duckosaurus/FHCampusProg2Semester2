@@ -21,11 +21,6 @@ import java.util.stream.Collectors;
 public class WatchlistController implements Initializable {
 
     @FXML
-    private JFXListView<Movie> watchlistView;
-
-    private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
-
-    @FXML
     public JFXListView<Movie> watchlistListView;
 
     @Override
