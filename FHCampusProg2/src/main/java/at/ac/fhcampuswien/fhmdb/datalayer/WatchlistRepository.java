@@ -46,16 +46,6 @@ public class WatchlistRepository {
         }
     }
 
-    // Film zur Watchlist hinzufügen
-    public void addToWatchlist(Movie movie) {
-        try {
-            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.getId());
-            dao.createIfNotExists(entity);
-        } catch (SQLException e) {
-            throw new DatabaseException("Fehler beim Hinzufügen zur Watchlist", e);
-        }
-    }
-
     public List<WatchlistMovieEntity> getAll() {
         try {
             return dao.queryForAll();

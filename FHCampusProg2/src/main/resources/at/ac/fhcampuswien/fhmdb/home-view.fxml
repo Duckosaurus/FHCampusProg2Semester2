@@ -13,7 +13,6 @@
       prefWidth="570.0"
       stylesheets="@styles.css">
 
-    <!-- Filter- und Aktionsleiste -->
     <HBox spacing="5.0"
           styleClass="background-black">
         <padding>
@@ -47,13 +46,9 @@
         <JFXButton fx:id="searchBtn"
                    text="Filter"
                    styleClass="background-yellow"/>
-        <JFXButton fx:id="watchlistBtn"
-                   text="watchlist"
-                   styleClass="background-yellow"/>
 
     </HBox>
 
-    <!-- Movie-ListView -->
     <JFXListView fx:id="movieListView"
                  VBox.vgrow="ALWAYS"
                  styleClass="background-black" />

@@ -46,8 +46,6 @@ public class HomeController implements Initializable {
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
-    private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
-    public JFXButton watchlistBtn;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,20 +78,6 @@ public class HomeController implements Initializable {
             search();
             sortMovies();
         });
-        watchlistBtn.setOnAction(e -> {
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));
-                Scene watchlistScene = new Scene(fxmlLoader.load());
-                Stage stage = (Stage) watchlistBtn.getScene().getWindow();
-                stage.setScene(watchlistScene);
-                stage.show();
-            } catch (IOException ex) {
-                showAlert(Alert.AlertType.ERROR,
-                        "Fehler beim Wechseln",
-                        "Die Watchlist konnte nicht geladen werden.\nBitte versuche es später erneut.");
-            }
-        });
-
     }
 
     private void loadMoviesFromApi() {
@@ -239,13 +223,4 @@ public class HomeController implements Initializable {
         return movies.stream().filter(x -> x.getReleaseYear() >= startYear && x.getReleaseYear() <= endYear).collect(Collectors.toList());
     }
 
-    @FXML
-    private void navigateToHome(ActionEvent event) {
-        loadMoviesFromApi();
-    }
-
-    @FXML
-    private void navigateToWatchlist(ActionEvent event) {
-        //loadMoviesFromWatchlist();
-    }
 }
