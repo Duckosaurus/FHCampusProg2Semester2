@@ -8,29 +8,22 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
-public class WatchlistRepository
-{
+public class WatchlistRepository {
     private static WatchlistRepository instance;
     private final Dao<WatchlistMovieEntity, Long> dao;
 
-    public WatchlistRepository()
-    {
-        try
-        {
+    public WatchlistRepository() {
+        try {
             dao = DaoManager.createDao(DatabaseManager.getConnectionSource(), WatchlistMovieEntity.class);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new DatabaseException("Fehler beim Erstellen des Watchlist-DAOs", e);
         }
     }
 
-    public static WatchlistRepository getInstance()
-    {
-        if (instance == null)
-        {
+    public static WatchlistRepository getInstance() {
+        if (instance == null) {
             instance = new WatchlistRepository();
         }
         return instance;
@@ -52,19 +45,17 @@ public class WatchlistRepository
                     "die DB-Verbindung funktioniert.", e);
         }
     }
+
     // Film zur Watchlist hinzufügen
-    public void addToWatchlist(Movie movie)
-    {
-        try
-        {
-            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.apiId);
+    public void addToWatchlist(Movie movie) {
+        try {
+            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.getId());
             dao.createIfNotExists(entity);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new DatabaseException("Fehler beim Hinzufügen zur Watchlist", e);
         }
     }
+
     public List<WatchlistMovieEntity> getAll() {
         try {
             return dao.queryForAll();
@@ -73,17 +64,14 @@ public class WatchlistRepository
                     "Möglicherweise existiert die Tabelle nicht oder die Verbindung zur DB ist unterbrochen.", e);
         }
     }
+
     // Film aus der Watchlist entfernen
-    public void removeFromWatchlist(String apiId)
-    {
-        try
-        {
+    public void removeFromWatchlist(UUID apiId) {
+        try {
             DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("apiId", apiId);
             deleteBuilder.delete();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             throw new DatabaseException("Fehler beim Entfernen aus der Watchlist", e);
         }
     }

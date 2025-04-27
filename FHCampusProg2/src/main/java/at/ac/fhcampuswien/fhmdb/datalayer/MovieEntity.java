@@ -16,8 +16,6 @@ public class MovieEntity {
     @DatabaseField(generatedId = true)
     public UUID id;
     @DatabaseField
-    public String apiId;
-    @DatabaseField
     public String title;
     @DatabaseField
     public String description;
@@ -32,10 +30,9 @@ public class MovieEntity {
     @DatabaseField
     public double rating;
 
-    public MovieEntity(UUID id, String apiId, String title, String description, String genres,
+    public MovieEntity(UUID id, long apiId, String title, String description, String genres,
                        int releaseYear, String imgUrl, int lengthInMinutes, double rating) {
         this.id = id;
-        this.apiId = apiId;
         this.title = title;
         this.description = description;
         this.genres = genres;
@@ -46,7 +43,7 @@ public class MovieEntity {
     }
 
     public MovieEntity(Movie movie) {
-        this.apiId = movie.getId();
+        this.id = movie.getId();
         this.title = movie.getTitle();
         this.description = movie.getDescription();
         this.genres = genreToString(movie.getGenres());
@@ -86,7 +83,7 @@ public class MovieEntity {
                             entity.title,
                             entity.description,
                             genreList, // Die genreList, die wir gerade erstellt haben
-                            entity.apiId,
+                            entity.id,
                             entity.releaseYear,
                             entity.imgUrl,
                             entity.lengthInMinutes,

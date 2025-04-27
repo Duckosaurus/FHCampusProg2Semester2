@@ -4,9 +4,10 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Movie {
-    private String id;
+    private UUID id;
     private String title;
     private String description;
     private List<Genre> genres;
@@ -16,21 +17,22 @@ public class Movie {
     private Number rating;
     public String imgUrl;
     public int lengthInMinutes;
-    public String apiId;
+    public long apiId;
 
-    public String getId()
-    {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id)
-    {
+    public long getApiId() {
+        return apiId;
+    }
+
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Movie(String id, String apiId, String title, String description, int releaseYear, Number rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
+    public Movie(UUID id, String apiId, String title, String description, int releaseYear, Number rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
         this.id = id;
-        this.apiId = apiId;
         this.title = title;
         this.description = description;
         this.genres = genres;
@@ -39,6 +41,7 @@ public class Movie {
         this.lengthInMinutes = lengthInMinutes;
         this.rating = rating;
     }
+
     public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
         this.description = description;
@@ -48,6 +51,7 @@ public class Movie {
         this.releaseYear = releaseYear;
         this.rating = rating;
     }
+
     public Movie(String title, String description, List<Genre> genres, List<String> mainCast,
                  String director, int releaseYear, double rating) {
         this.title = title;
@@ -104,7 +108,7 @@ public class Movie {
     }
 
     public Movie(String title, String description, List<Genre> genres,
-                 String id, int releaseYear, String imgUrl, int lengthInMinutes,
+                 UUID id, int releaseYear, String imgUrl, int lengthInMinutes,
                  Number rating) {
         this.title = title;
         this.description = description;
@@ -115,6 +119,7 @@ public class Movie {
         this.lengthInMinutes = lengthInMinutes;
         this.rating = rating;
     }
+
     public static List<Movie> initializeMovies() {
         List<Movie> movies = new ArrayList<>();
         movies.add(new Movie("Inception", "A mind-bending thriller.", List.of(Genre.SCIENCE_FICTION, Genre.THRILLER)));
@@ -140,13 +145,11 @@ public class Movie {
         return movies;
     }
 
-    public String getImgUrl()
-    {
-        return  imgUrl;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public int getLengthInMinutes()
-    {
+    public int getLengthInMinutes() {
         return lengthInMinutes;
     }
 }

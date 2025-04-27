@@ -73,7 +73,7 @@ public class MovieRepository {
         }
     }
 
-    public MovieEntity findById(String movieId) {
+    public MovieEntity findById(UUID movieId) {
         try {
             return dao.queryForId(movieId); // Verwendet die Movie-ID als Primärschlüssel
         } catch (SQLException e) {
@@ -81,5 +81,13 @@ public class MovieRepository {
             return null; // Rückgabe von null, falls der Film nicht gefunden wird
         }
     }
+
+    public void save(Movie movie) throws SQLException {
+        if (movie != null) {
+            MovieEntity movieEntity = new MovieEntity(movie);
+            dao.createOrUpdate(movieEntity);  // Speichern oder aktualisieren
+        }
+    }
+
 
 }

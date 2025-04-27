@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
@@ -112,33 +113,13 @@ public class HomeController implements Initializable {
                         movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
                     });
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 observableMovies.clear();
                 movieListView.setItems(observableMovies);
             }
 
         }).start();
     }
-
-//    private void loadMoviesFromWatchlist() {
-//        // Hier müsstest du die Filme aus deiner Watchlist-Datenbank laden
-//        new Thread(() -> {
-//            List<Movie> moviesFromWatchlist = null;
-//            try {
-//                moviesFromWatchlist = WatchlistRepository.getInstance().getAllWatchlistMovies(); // oder eine ähnliche Methode von dir
-//                List<Movie> finalMoviesFromWatchlist = moviesFromWatchlist;
-//                javafx.application.Platform.runLater(() -> {
-//                    observableMovies.setAll(finalMoviesFromWatchlist);
-//                    movieListView.setItems(observableMovies);
-//                    movieListView.setCellFactory(movieListView -> new MovieCell()); // oder eine spezialisierte WatchlistCell
-//                });
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                observableMovies.clear();
-//                movieListView.setItems(observableMovies);
-//            }
-//        }).start();
-//    }
 
     public void search() {
         List<Movie> allMoviesSearched = searchMoviesWithText();

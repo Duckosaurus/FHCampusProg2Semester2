@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
+import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistMovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -14,10 +15,10 @@ import javafx.scene.control.Alert;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class WatchlistController implements Initializable
-{
+public class WatchlistController implements Initializable {
 
     @FXML
     private JFXListView<Movie> watchlistView;
@@ -35,9 +36,9 @@ public class WatchlistController implements Initializable
             MovieRepository movieRepo = new MovieRepository();
 
             // Liste mit gespeicherten API-IDs
-            List<String> watchlistIds = watchlistRepo.getAll().stream()
-                    .map(w -> w.getApiId())
-                    .collect(Collectors.toList());
+            List<UUID> watchlistIds = watchlistRepo.getAll().stream()
+                    .map(WatchlistMovieEntity::getMovieId)
+                    .toList();
 
             // Alle Filme aus der Datenbank holen
             List<MovieEntity> list = movieRepo.getAllMovies();
