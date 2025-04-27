@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class MovieCell extends ListCell<Movie> {
 
@@ -25,9 +24,8 @@ public class MovieCell extends ListCell<Movie> {
     private final VBox textLayout = new VBox(title, detail, genres, rating, releaseYear);
 
     // Button Box
-    private final Button showDetailsButton = new Button("Show Details");
     private final Button watchlistButton = new Button("To Watchlist");
-    private final HBox buttonLayout = new HBox(showDetailsButton, watchlistButton);
+    private final HBox buttonLayout = new HBox(watchlistButton);
 
     // Main Box für Text- & Button Box
     private final HBox mainLayout = new HBox();
@@ -36,9 +34,9 @@ public class MovieCell extends ListCell<Movie> {
     private ClickEventHandler<Movie> onWatchlistClicked;
     private boolean isInWatchlistView;  // Unterscheidung Home/Watchlist
 
-    public MovieCell()
-    {
+    public MovieCell() {
     }
+
     // MovieCell Konstruktor
     public MovieCell(ClickEventHandler<Movie> onWatchlistClicked, boolean isInWatchlistView) {
         this.onWatchlistClicked = onWatchlistClicked;
@@ -62,7 +60,6 @@ public class MovieCell extends ListCell<Movie> {
         mainLayout.setSpacing(20);
 
         // Button-Styles
-        showDetailsButton.getStyleClass().add("button-cell");
         watchlistButton.getStyleClass().add("button-cell");
 
         // Button-Beschriftung je nach View
@@ -75,6 +72,7 @@ public class MovieCell extends ListCell<Movie> {
             }
         });
     }
+
     @Override
     protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);
