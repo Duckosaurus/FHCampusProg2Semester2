@@ -98,7 +98,6 @@ public class HomeController implements Initializable {
                 moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
                 if (moviesFromApi != null) {
 
-                    //TODO: Überprüfen ob die Id schon in der DB ist - bzw geht noch nd
                     MovieRepository movieRepo = new MovieRepository();
                     for (Movie movie : moviesFromApi) {
                         var t = movieRepo.findById(movie.getId());
