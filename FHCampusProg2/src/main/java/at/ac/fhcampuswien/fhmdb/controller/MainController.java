@@ -9,9 +9,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class MainController {
 
+    public BorderPane mainLayout;
     @FXML
     private StackPane mainContent;
 
@@ -57,9 +59,9 @@ public class MainController {
 
     private void loadView(String fxmlFile) {
         try {
-            Pane view = FXMLLoader.load(getClass().getResource(fxmlFile));
+            Pane view = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/at/ac/fhcampuswien/fhmdb/"+fxmlFile)));
             mainContent.getChildren().setAll(view);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Could not load view: " + fxmlFile);
             e.printStackTrace();
         }

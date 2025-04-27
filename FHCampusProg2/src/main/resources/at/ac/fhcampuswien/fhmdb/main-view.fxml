@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="root"
-           xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
+<StackPane
+           xmlns="http://javafx.com/javafx/15.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="at.ac.fhcampuswien.fhmdb.controller.MainController"
            stylesheets="@styles.css">
 

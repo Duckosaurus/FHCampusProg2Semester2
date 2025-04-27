@@ -48,10 +48,7 @@
                    text="Filter"
                    styleClass="background-yellow"/>
 
-        <JFXButton fx:id="clearBtn"
-                   text="Clear"
-                   visible="false"
-                   styleClass="background-yellow"/>
+
     </HBox>
 
     <!-- Movie-ListView -->

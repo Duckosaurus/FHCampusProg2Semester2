@@ -33,7 +33,7 @@ public class DatabaseManager
         return conn;
     }
 
-    public void createTables() throws SQLException
+    public static void createTables() throws SQLException
     {
         if (conn == null) {
             createConnectionsSource();
