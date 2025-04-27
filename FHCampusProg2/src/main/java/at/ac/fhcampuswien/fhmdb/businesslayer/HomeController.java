@@ -1,8 +1,12 @@
 package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.datalayer.MovieEntity;
+import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
+import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistMovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXButton;
@@ -41,8 +45,17 @@ public class HomeController implements Initializable {
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
-    private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
+    private WatchlistRepository watchlistRepository;
+    private MovieRepository movieRepository;
 
+    public HomeController()
+    {
+    }
+
+    public void setRepositories(WatchlistRepository watchlistRepository, MovieRepository movieRepository) {
+        this.watchlistRepository = watchlistRepository;
+        this.movieRepository = movieRepository;
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         genreComboBox.getItems().addAll(Genre.values());
@@ -81,15 +94,14 @@ public class HomeController implements Initializable {
     private void loadMoviesFromApi() {
         ClickEventHandler<Movie> addToWatchlistHandler = movie -> {
             try {
-                WatchlistRepository watchlistRepo = new WatchlistRepository();
-                watchlistRepo.add(movie);
+                WatchlistMovieEntity watchlistMovieEntity = convertMovieToWatchlistMovieEntity(movie);
+                watchlistRepository.addToWatchlist(watchlistMovieEntity);
+                showAlert(Alert.AlertType.INFORMATION, "Erfolg", "Film zur Watchlist hinzugefügt.");
             } catch (DatabaseException ex) {
-                showAlert(Alert.AlertType.ERROR,
-                        "Speicherfehler",
-                        "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
-                                "Bitte versuche es später erneut.");
+                showAlert(Alert.AlertType.ERROR, "Datenbankfehler", "Fehler beim Hinzufügen des Films zur Watchlist: " + ex.getMessage());
             }
         };
+
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
@@ -100,16 +112,59 @@ public class HomeController implements Initializable {
                         observableMovies.setAll(finalMoviesFromApi);
                         allMovies.addAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
-                        movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
+                        movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false)); // Use your MovieCell!
                     });
                 }
             } catch (IOException e) {
                 observableMovies.clear();
                 movieListView.setItems(observableMovies);
+                showAlert(Alert.AlertType.ERROR, "API Fehler", "Fehler beim Abrufen der Filmdaten von der API: " + e.getMessage());
             }
 
         }).start();
     }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private WatchlistMovieEntity convertMovieToWatchlistMovieEntity(Movie movie) {
+        return new WatchlistMovieEntity(movie.apiId);
+    }
+
+    private List<MovieEntity> convertMoviesToMovieEntities(List<Movie> movies) {
+        return movies.stream().map(movie -> new MovieEntity(
+                movie.apiId,
+                movie.getTitle(),
+                movie.getDescription(),
+                MovieEntity.genresToString(movie.getGenres()),
+                movie.getReleaseYear(),
+                movie.getImgUrl(),
+                movie.getLengthInMinutes(),
+                movie.getRating()
+        )).collect(Collectors.toList());
+    }
+
+    private List<Movie> convertMovieEntitiesToMovies(List<MovieEntity> movieEntities) {
+        return movieEntities.stream().map(entity -> new Movie(
+                null,
+                entity.getApiId(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getReleaseYear(),
+                entity.getRating(),
+                MovieEntity.stringToGenres(entity.getGenres()),
+                entity.getImgUrl(),
+                entity.getLengthMinutes()
+        )).collect(Collectors.toList());
+    }
+
+    // ... (Other methods)
+
 
 //    private void loadMoviesFromWatchlist() {
 //        // Hier müsstest du die Filme aus deiner Watchlist-Datenbank laden
@@ -144,9 +199,9 @@ public class HomeController implements Initializable {
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
 
-    public List<Movie> filterMoviesByRating(List<Movie> allMovies, Number selectedRating) {
+    public List<Movie> filterMoviesByRating(List<Movie> allMovies, double selectedRating) {
         return allMovies.stream()
-                .filter(movie -> movie.getRating().doubleValue() >= selectedRating.doubleValue() && movie.getRating().doubleValue() < (selectedRating.doubleValue() + 0.9))
+                .filter(movie -> movie.getRating() >= selectedRating && movie.getRating() < (selectedRating + 0.9))
                 .collect(Collectors.toList());
     }
 
@@ -207,13 +262,7 @@ public class HomeController implements Initializable {
         }
         return "Es gibt keinen häufigsten";
     }
-    private void showAlert(Alert.AlertType type, String title, String text) {
-        Alert a = new Alert(type);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(text);
-        a.showAndWait();
-    }
+
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)

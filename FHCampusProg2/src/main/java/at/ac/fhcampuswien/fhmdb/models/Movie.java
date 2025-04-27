@@ -13,7 +13,7 @@ public class Movie {
     private List<String> mainCast;
     private String director;
     private int releaseYear;
-    private Number rating;
+    private double rating;
     public String imgUrl;
     public int lengthInMinutes;
     public String apiId;
@@ -28,7 +28,7 @@ public class Movie {
         this.id = id;
     }
 
-    public Movie(String id, String apiId, String title, String description, int releaseYear, Number rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
+    public Movie(String id, String apiId, String title, String description, int releaseYear, double rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
         this.id = id;
         this.apiId = apiId;
         this.title = title;
@@ -83,7 +83,7 @@ public class Movie {
         this.releaseYear = releaseYear;
     }
 
-    public Number getRating() {
+    public double getRating() {
         return rating;
     }
 
@@ -105,7 +105,7 @@ public class Movie {
 
     public Movie(String title, String description, List<Genre> genres,
                  String id, int releaseYear, String imgUrl, int lengthInMinutes,
-                 Number rating) {
+                 double rating) {
         this.title = title;
         this.description = description;
         this.genres = genres;

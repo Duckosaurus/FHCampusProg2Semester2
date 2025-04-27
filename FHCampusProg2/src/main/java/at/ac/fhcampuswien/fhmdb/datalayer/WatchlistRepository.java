@@ -13,79 +13,48 @@ import java.util.stream.Collectors;
 public class WatchlistRepository
 {
     private static WatchlistRepository instance;
-    private final Dao<WatchlistMovieEntity, Long> dao;
+    private Dao<WatchlistMovieEntity, Long> watchlistDao;
 
-    public WatchlistRepository()
-    {
-        try
-        {
-            dao = DaoManager.createDao(DatabaseManager.getConnectionSource(), WatchlistMovieEntity.class);
-        }
-        catch (SQLException e)
-        {
-            throw new DatabaseException("Fehler beim Erstellen des Watchlist-DAOs", e);
-        }
+    public WatchlistRepository(Dao<WatchlistMovieEntity, Long> watchlistDao) {
+        this.watchlistDao = watchlistDao;
     }
-
-    public static WatchlistRepository getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new WatchlistRepository();
+    public static WatchlistRepository getInstance(Dao<WatchlistMovieEntity, Long> watchlistDao) {
+        if (instance == null) {
+            instance = new WatchlistRepository(watchlistDao);
         }
         return instance;
     }
+    public List<WatchlistMovieEntity> getWatchlist() throws DatabaseException {
+        try {
+            return watchlistDao.queryForAll();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error getting watchlist: " + e.getMessage(), e);
+        }
+    }
 
-    public int add(Movie movie) {
+    public int addToWatchlist(WatchlistMovieEntity movie) throws DatabaseException {
         try {
-            WatchlistMovieEntity existing = dao.queryBuilder()
-                    .where().eq("apiId", movie.getId())
-                    .queryForFirst();
-            if (existing == null) {
-                dao.create(new WatchlistMovieEntity(movie.getId()));
-                return 1;
+            // Check if the movie is already in the watchlist
+            List<WatchlistMovieEntity> existingMovies = watchlistDao.queryForEq("apiId", movie.getApiId());
+            if (existingMovies != null && !existingMovies.isEmpty()) {
+                // Movie already exists, don't add again
+                return 0;
             }
-            return 0;
+            return watchlistDao.create(movie);
         } catch (SQLException e) {
-            throw new DatabaseException("WatchlistRepository: Fehler beim Hinzufügen des Films '" + movie.getTitle() +
-                    "' (API-ID: " + movie.getId() + ") zur Watchlist. Prüfe, ob der Eintrag bereits existiert oder ob " +
-                    "die DB-Verbindung funktioniert.", e);
+            throw new DatabaseException("Error adding to watchlist: " + e.getMessage(), e);
         }
     }
-    // Film zur Watchlist hinzufügen
-    public void addToWatchlist(Movie movie)
-    {
-        try
-        {
-            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.apiId);
-            dao.createIfNotExists(entity);
-        }
-        catch (SQLException e)
-        {
-            throw new DatabaseException("Fehler beim Hinzufügen zur Watchlist", e);
-        }
-    }
-    public List<WatchlistMovieEntity> getAll() {
+
+    public int removeFromWatchlist(String apiId) throws DatabaseException {
         try {
-            return dao.queryForAll();
-        } catch (SQLException e) {
-            throw new DatabaseException("WatchlistRepository: Fehler beim Auslesen aller Watchlist-Einträge. " +
-                    "Möglicherweise existiert die Tabelle nicht oder die Verbindung zur DB ist unterbrochen.", e);
-        }
-    }
-    // Film aus der Watchlist entfernen
-    public void removeFromWatchlist(String apiId)
-    {
-        try
-        {
-            DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = dao.deleteBuilder();
+            DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = watchlistDao.deleteBuilder();
             deleteBuilder.where().eq("apiId", apiId);
-            deleteBuilder.delete();
-        }
-        catch (SQLException e)
-        {
-            throw new DatabaseException("Fehler beim Entfernen aus der Watchlist", e);
+            return deleteBuilder.delete();
+        } catch (SQLException e) {
+            throw new DatabaseException("Error removing from watchlist: " + e.getMessage(), e);
         }
     }
-}
+    }
+
 

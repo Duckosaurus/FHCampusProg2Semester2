@@ -1,102 +1,122 @@
 package at.ac.fhcampuswien.fhmdb.datalayer;
-
-import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "movies")
-public class MovieEntity
-{
+public class MovieEntity {
+
     @DatabaseField(generatedId = true)
-    public long id;
+    private long id;
+
+    @DatabaseField(canBeNull = false, unique = true)
+    private String apiId;
+
+    @DatabaseField(canBeNull = false)
+    private String title;
+
+    @DatabaseField(canBeNull = false)
+    private String description;
+
+    @DatabaseField(canBeNull = false)
+    private String genres;
+
+    @DatabaseField(canBeNull = false)
+    private int releaseYear;
+
     @DatabaseField
-    public String apiId;
+    private String imgUrl;
+
     @DatabaseField
-    public String title;
+    private int lengthMinutes;
+
     @DatabaseField
-    public String description;
-    @DatabaseField
-    public String genres;
-    @DatabaseField
-    public int releaseYear;
-    @DatabaseField
-    public String imgUrl;
-    @DatabaseField
-    public int lengthInMinutes;
-    @DatabaseField
-    public double rating;
-    public MovieEntity(long id, String apiId, String title, String description, String genres,
-                       int releaseYear, String imgUrl, int lengthInMinutes, double rating) {
-        this.id = id;
+    private double rating;
+
+    // Default constructor (necessary for ORMLite)
+    public MovieEntity() {
+    }
+
+    // Constructor with parameters (optional, for convenience)
+    public MovieEntity(String apiId, String title, String description, String genres, int releaseYear, String imgUrl, int lengthMinutes, double rating) {
         this.apiId = apiId;
         this.title = title;
         this.description = description;
         this.genres = genres;
         this.releaseYear = releaseYear;
         this.imgUrl = imgUrl;
-        this.lengthInMinutes = lengthInMinutes;
+        this.lengthMinutes = lengthMinutes;
         this.rating = rating;
     }
 
-    public MovieEntity(Movie movie) {
-        this.apiId = movie.getId();
-        this.title = movie.getTitle();
-        this.description = movie.getDescription();
-        this.genres = genreToString(movie.getGenres());
-        this.releaseYear = movie.getReleaseYear();
-        this.imgUrl = movie.getImgUrl();
-        this.lengthInMinutes = movie.getLengthInMinutes();
-        this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
-    }
-    public MovieEntity() {}
-    public String genreToString(List<Genre> genres){
-        List<String> stringGenres = new ArrayList<String>();
-        for (Genre genre : genres)
-            stringGenres.add(genre.toString());
-        return String.join(",",stringGenres);
+
+    // Converts a List<Genre> or EnumSet<Genre> to a comma-separated String
+    public static String genresToString(List<Genre> genres) { // Adapt type if needed (e.g., EnumSet<Genre>)
+        if (genres == null || genres.isEmpty()) {
+            return "";
+        }
+        return genres.stream()
+                .map(Genre::name)  // Get the name of each enum value
+                .collect(Collectors.joining(","));
     }
 
-    public static List<MovieEntity> fromMovies(List<Movie> movies) {
-        return movies.stream()
-                .map(movie -> new MovieEntity(movie))
+    // Converts a comma-separated String to a List<Genre>
+    public static List<Genre> stringToGenres(String genresString) {
+        if (genresString == null || genresString.isEmpty()) {
+            return List.of(); // Or Collections.emptyList() for immutability
+        }
+        return Arrays.stream(genresString.split(","))
+                .map(String::trim)  // Remove extra spaces
+                .map(Genre::valueOf) // Convert string to Enum value
                 .collect(Collectors.toList());
     }
 
-    public static List<Movie> toMovies(List<MovieEntity> movieEntities) {
-        return movieEntities.stream()  // Starte einen Stream über die List<MovieEntity>
-                .map(entity -> { // Für jede einzelne MovieEntity mache ...
 
-                    List<Genre> genreList = Arrays.stream(entity.genres.split(","))  // "DRAMA,COMEDY" → ["ACTION", "COMEDY"]
-                            .map(genre -> genre.trim()) // → entfernt Leerzeichen " DRAMA " → "DRAMA"
-                            .map(genre -> Genre.valueOf(genre)) // → konvertiere String zu Enum: "DRAMA" → Genre.DRAMA
-                            .collect(Collectors.toList()); // → List<Genre>
+    // Getters and Setters
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-                    // Erstelle ein neues Movie-Objekt mit allen Werten
-                    return new Movie(
-                            entity.title,
-                            entity.description,
-                            genreList, // Die genreList, die wir gerade erstellt haben
-                            entity.apiId,
-                            entity.releaseYear,
-                            entity.imgUrl,
-                            entity.lengthInMinutes,
-                            entity.rating // Autoboxing von double -> Double (= Subtyp von Number, deshalb ok)
-                    );
-                })
-                .collect(Collectors.toList());  // Sammle alle zurückgegebenen Movie-Objekte in einer neuen List<Movie>
+    public String getApiId() { return apiId; }
+    public void setApiId(String apiId) { this.apiId = apiId; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getGenres() { return genres; }
+    public void setGenres(String genres) { this.genres = genres; }
+
+    public int getReleaseYear() { return releaseYear; }
+    public void setReleaseYear(int releaseYear) { this.releaseYear = releaseYear; }
+
+    public String getImgUrl() { return imgUrl; }
+    public void setImgUrl(String imgUrl) { this.imgUrl = imgUrl; }
+
+    public int getLengthMinutes() { return lengthMinutes; }
+    public void setLengthMinutes(int lengthMinutes) { this.lengthMinutes = lengthMinutes; }
+
+    public double getRating() { return rating; }
+    public void setRating(double rating) { this.rating = rating; }
+
+
+
+
+    // Converts a List<Movie> to a List<MovieEntity>
+    public static List<MovieEntity> fromMovies(List<Movie> movies) {  // Assuming you have a Movie class
+        // Implementation depends on your Movie class structure
+        return null; // Replace with actual implementation
     }
 
-
-
+    // Converts a List<MovieEntity> to a List<Movie>
+    public static List<Movie> toMovies(List<MovieEntity> movieEntities) { // Assuming you have a Movie class
+        // Implementation depends on your Movie class structure
+        return null; // Replace with actual implementation
+    }
 }

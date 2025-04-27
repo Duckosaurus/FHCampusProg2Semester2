@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.datalayer.DatabaseManager;
+import at.ac.fhcampuswien.fhmdb.businesslayer.HomeController;
+import at.ac.fhcampuswien.fhmdb.datalayer.*;
+import com.j256.ormlite.dao.Dao;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -9,24 +11,19 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class FhmdbApplication extends Application {
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws SQLException
+    {
         // 1) Datenbank initialisieren
-        try {
-            DatabaseManager.createConnectionsSource();
-            DatabaseManager.createTables();
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR,
-                    "Datenbankfehler",
-                    "Die Anwendung konnte die lokale Datenbank nicht öffnen.\n" +
-                            "Bitte überprüfe, ob du Schreib‑ und Leserechte im Programmordner hast.\n" +
-                            "Die App wird nun beendet.");
-            Platform.exit();
-            return;
-        }
+        DatabaseManager dbManager = new DatabaseManager();
+        Dao<MovieEntity, Long> movieDao = dbManager.getMovieDao();
+        Dao<WatchlistMovieEntity, Long> watchlistDao = dbManager.getWatchlistDao();
+        MovieRepository movieRepository = new MovieRepository(movieDao);
+        WatchlistRepository watchlistRepository = new WatchlistRepository(watchlistDao);
 
         // 2) GUI laden
         try {
