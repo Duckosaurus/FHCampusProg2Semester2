@@ -1,17 +1,41 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+//import com.j256.ormlite.field.DatabaseField;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Movie {
+    private UUID id;
     private String title;
     private String description;
     private List<Genre> genres;
     private List<String> mainCast;
     private String director;
     private int releaseYear;
-    private double rating;
+    private Number rating;
+    public String imgUrl;
+    public int lengthInMinutes;
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Movie(UUID id, String apiId, String title, String description, int releaseYear, Number rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.genres = genres;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.rating = rating;
+    }
 
     public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
@@ -58,7 +82,7 @@ public class Movie {
         this.releaseYear = releaseYear;
     }
 
-    public double getRating() {
+    public Number getRating() {
         return rating;
     }
 
@@ -78,6 +102,18 @@ public class Movie {
         return genres;
     }
 
+    public Movie(String title, String description, List<Genre> genres,
+                 UUID id, int releaseYear, String imgUrl, int lengthInMinutes,
+                 Number rating) {
+        this.title = title;
+        this.description = description;
+        this.genres = genres;
+        this.id = id;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.rating = rating;
+    }
 
     public static List<Movie> initializeMovies() {
         List<Movie> movies = new ArrayList<>();
@@ -102,5 +138,13 @@ public class Movie {
         movies.add(new Movie("Mad Max: Fury Road", "A post-apocalyptic warrior joins forces with a rebel to overthrow a tyrant.",
                 List.of(Genre.ACTION, Genre.ADVENTURE, Genre.SCIENCE_FICTION)));
         return movies;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public int getLengthInMinutes() {
+        return lengthInMinutes;
     }
 }

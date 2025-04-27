@@ -1,10 +1,17 @@
 module at.ac.fhcampuswien.fhmdb {
     requires javafx.controls;
     requires javafx.fxml;
-    requires okhttp3;
-    requires com.jfoenix;
-    requires com.google.gson;
-    opens at.ac.fhcampuswien.fhmdb.models to com.google.gson;
 
+    requires com.jfoenix;
+    requires okhttp3;
+    requires com.google.gson;
+    requires ormlite.jdbc;
+    requires java.sql;
+
+    opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
+    opens at.ac.fhcampuswien.fhmdb.models to com.google.gson;
+    opens at.ac.fhcampuswien.fhmdb.datalayer to ormlite.jdbc;
     exports at.ac.fhcampuswien.fhmdb;
+    exports at.ac.fhcampuswien.fhmdb.businesslayer;
+    opens at.ac.fhcampuswien.fhmdb.businesslayer to javafx.fxml;
 }

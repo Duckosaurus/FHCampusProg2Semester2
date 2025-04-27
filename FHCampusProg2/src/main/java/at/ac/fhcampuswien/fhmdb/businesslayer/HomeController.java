@@ -1,19 +1,28 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.businesslayer;
 
+import at.ac.fhcampuswien.fhmdb.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
+import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
@@ -72,20 +81,40 @@ public class HomeController implements Initializable {
     }
 
     private void loadMoviesFromApi() {
+        ClickEventHandler<Movie> addToWatchlistHandler = movie -> {
+            try {
+                WatchlistRepository watchlistRepo = new WatchlistRepository();
+                watchlistRepo.add(movie);
+            } catch (DatabaseException ex) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Speicherfehler",
+                        "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
+                                "Bitte versuche es später erneut.");
+            }
+        };
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
                 moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
                 if (moviesFromApi != null) {
+
+                    MovieRepository movieRepo = new MovieRepository();
+                    for (Movie movie : moviesFromApi) {
+                        var t = movieRepo.findById(movie.getId());
+                        if (t == null) {
+                            movieRepo.save(movie);  // Film speichern, wenn noch nicht vorhanden
+                        }
+                    }
+
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
                         observableMovies.setAll(finalMoviesFromApi);
                         allMovies.addAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
-                        movieListView.setCellFactory(movieListView -> new MovieCell());
+                        movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
                     });
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 observableMovies.clear();
                 movieListView.setItems(observableMovies);
             }
@@ -106,9 +135,9 @@ public class HomeController implements Initializable {
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
 
-    public List<Movie> filterMoviesByRating(List<Movie> allMovies, int selectedRating) {
+    public List<Movie> filterMoviesByRating(List<Movie> allMovies, Number selectedRating) {
         return allMovies.stream()
-                .filter(movie -> movie.getRating() >= (double)selectedRating && movie.getRating() < ((double)selectedRating + 0.9))
+                .filter(movie -> movie.getRating().doubleValue() >= selectedRating.doubleValue() && movie.getRating().doubleValue() < (selectedRating.doubleValue() + 0.9))
                 .collect(Collectors.toList());
     }
 
@@ -170,6 +199,14 @@ public class HomeController implements Initializable {
         return "Es gibt keinen häufigsten";
     }
 
+    private void showAlert(Alert.AlertType type, String title, String text) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(text);
+        a.showAndWait();
+    }
+
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)
@@ -185,4 +222,5 @@ public class HomeController implements Initializable {
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         return movies.stream().filter(x -> x.getReleaseYear() >= startYear && x.getReleaseYear() <= endYear).collect(Collectors.toList());
     }
+
 }

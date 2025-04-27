@@ -29,6 +29,7 @@ public class MovieAPI
             if (!response.isSuccessful()) throw new IOException("API-Request fehlgeschlagen: " + response);
 
             String jsonResponse = response.body().string();
+            System.out.println(jsonResponse);
             return MovieParser.parseMovies(jsonResponse);
         }
     }
