@@ -6,10 +6,10 @@ import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
-public class MovieRepository
-{
-    private final Dao<MovieEntity, Long> dao;
+public class MovieRepository {
+    private final Dao<MovieEntity, UUID> dao;
 
     // Konstruktor – holt das DAO vom DatabaseManager
     public MovieRepository() {
@@ -72,4 +72,14 @@ public class MovieRepository
                     "die Verbindung zur DB besteht.", e);
         }
     }
+
+    public MovieEntity findById(String movieId) {
+        try {
+            return dao.queryForId(movieId); // Verwendet die Movie-ID als Primärschlüssel
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // Rückgabe von null, falls der Film nicht gefunden wird
+        }
+    }
+
 }

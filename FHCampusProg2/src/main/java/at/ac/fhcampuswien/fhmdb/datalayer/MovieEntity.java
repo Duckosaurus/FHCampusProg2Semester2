@@ -1,25 +1,20 @@
 package at.ac.fhcampuswien.fhmdb.datalayer;
 
-import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "movies")
-public class MovieEntity
-{
+public class MovieEntity {
     @DatabaseField(generatedId = true)
-    public long id;
+    public UUID id;
     @DatabaseField
     public String apiId;
     @DatabaseField
@@ -36,7 +31,8 @@ public class MovieEntity
     public int lengthInMinutes;
     @DatabaseField
     public double rating;
-    public MovieEntity(long id, String apiId, String title, String description, String genres,
+
+    public MovieEntity(UUID id, String apiId, String title, String description, String genres,
                        int releaseYear, String imgUrl, int lengthInMinutes, double rating) {
         this.id = id;
         this.apiId = apiId;
@@ -59,12 +55,15 @@ public class MovieEntity
         this.lengthInMinutes = movie.getLengthInMinutes();
         this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
     }
-    public MovieEntity() {}
-    public String genreToString(List<Genre> genres){
+
+    public MovieEntity() {
+    }
+
+    public String genreToString(List<Genre> genres) {
         List<String> stringGenres = new ArrayList<String>();
         for (Genre genre : genres)
             stringGenres.add(genre.toString());
-        return String.join(",",stringGenres);
+        return String.join(",", stringGenres);
     }
 
     public static List<MovieEntity> fromMovies(List<Movie> movies) {
@@ -96,7 +95,6 @@ public class MovieEntity
                 })
                 .collect(Collectors.toList());  // Sammle alle zurückgegebenen Movie-Objekte in einer neuen List<Movie>
     }
-
 
 
 }

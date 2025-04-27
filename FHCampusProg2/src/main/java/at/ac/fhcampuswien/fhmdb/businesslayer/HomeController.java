@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
@@ -95,6 +96,14 @@ public class HomeController implements Initializable {
             try {
                 moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
                 if (moviesFromApi != null) {
+
+                    MovieRepository movieRepo = new MovieRepository();
+                    for (Movie movie : moviesFromApi) {
+                        if (movieRepo.findById(movie.getId()) == null) {
+                            movieRepo.save(movie);  // Film speichern, wenn noch nicht vorhanden
+                        }
+                    }
+
                     List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
                         observableMovies.setAll(finalMoviesFromApi);
@@ -207,6 +216,7 @@ public class HomeController implements Initializable {
         }
         return "Es gibt keinen häufigsten";
     }
+
     private void showAlert(Alert.AlertType type, String title, String text) {
         Alert a = new Alert(type);
         a.setTitle(title);
@@ -214,6 +224,7 @@ public class HomeController implements Initializable {
         a.setContentText(text);
         a.showAndWait();
     }
+
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)
