@@ -1,6 +1,7 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.controller;
 
-//import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -39,7 +40,7 @@ public class HomeController implements Initializable {
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
-    //private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
+    private final WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -129,9 +130,9 @@ public class HomeController implements Initializable {
         filterSpecificGenre(allMoviesSearched, selectedGenre);
     }
 
-    public List<Movie> filterMoviesByRating(List<Movie> allMovies, int selectedRating) {
+    public List<Movie> filterMoviesByRating(List<Movie> allMovies, Number selectedRating) {
         return allMovies.stream()
-                .filter(movie -> movie.getRating() >= (double)selectedRating && movie.getRating() < ((double)selectedRating + 0.9))
+                .filter(movie -> movie.getRating().doubleValue() >= selectedRating.doubleValue() && movie.getRating().doubleValue() < (selectedRating.doubleValue() + 0.9))
                 .collect(Collectors.toList());
     }
 

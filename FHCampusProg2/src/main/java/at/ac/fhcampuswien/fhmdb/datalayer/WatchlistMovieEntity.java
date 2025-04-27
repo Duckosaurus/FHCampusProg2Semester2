@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.datalayer;
 
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -10,19 +11,20 @@ public class WatchlistMovieEntity {
     private long id;
 
     @DatabaseField
-    private long apiId;
+    private String apiId;
 
     // Leerer Konstruktor (wichtig für ORMLite)
     public WatchlistMovieEntity() {}
 
-    public WatchlistMovieEntity(long apiId) {
+    public WatchlistMovieEntity(String apiId) {
         this.apiId = apiId;
     }
-    public long getApiId() {
+    public String getApiId() {
         return apiId;
     }
 
-    public void setApiId(long apiId) {
+    public void setApiId(String apiId) {
         this.apiId = apiId;
     }
+
 }

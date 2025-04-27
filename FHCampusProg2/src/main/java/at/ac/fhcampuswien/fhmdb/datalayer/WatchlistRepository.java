@@ -15,7 +15,7 @@ public class WatchlistRepository
     private static WatchlistRepository instance;
     private final Dao<WatchlistMovieEntity, Long> dao;
 
-    private WatchlistRepository()
+    public WatchlistRepository()
     {
         try
         {
@@ -36,28 +36,12 @@ public class WatchlistRepository
         return instance;
     }
 
-    // Alle Filme aus der Watchlist laden
-    public List<Movie> getAllWatchlistMovies()
-    {
-        try
-        {
-            List<WatchlistMovieEntity> watchlist = dao.queryForAll();
-            return watchlist.stream()
-                    .map(entity -> MovieEntity.findByApiId(entity.getApiId()))
-                    .collect(Collectors.toList());
-        }
-        catch (SQLException e)
-        {
-            throw new DatabaseException("Fehler beim Laden der Watchlist", e);
-        }
-    }
-
     // Film zur Watchlist hinzufügen
     public void addToWatchlist(Movie movie)
     {
         try
         {
-            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.getId());
+            WatchlistMovieEntity entity = new WatchlistMovieEntity(movie.apiId);
             dao.createIfNotExists(entity);
         }
         catch (SQLException e)
@@ -65,7 +49,14 @@ public class WatchlistRepository
             throw new DatabaseException("Fehler beim Hinzufügen zur Watchlist", e);
         }
     }
-
+    public List<WatchlistMovieEntity> getAll() {
+        try {
+            return dao.queryForAll();
+        } catch (SQLException e) {
+            throw new DatabaseException("WatchlistRepository: Fehler beim Auslesen aller Watchlist-Einträge. " +
+                    "Möglicherweise existiert die Tabelle nicht oder die Verbindung zur DB ist unterbrochen.", e);
+        }
+    }
     // Film aus der Watchlist entfernen
     public void removeFromWatchlist(String apiId)
     {

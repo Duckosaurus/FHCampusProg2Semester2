@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb.datalayer;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
@@ -47,6 +48,17 @@ public class MovieEntity
         this.lengthInMinutes = lengthInMinutes;
         this.rating = rating;
     }
+
+    public MovieEntity(Movie movie) {
+        this.apiId = movie.getId();
+        this.title = movie.getTitle();
+        this.description = movie.getDescription();
+        this.genres = genreToString(movie.getGenres());
+        this.releaseYear = movie.getReleaseYear();
+        this.imgUrl = movie.getImgUrl();
+        this.lengthInMinutes = movie.getLengthInMinutes();
+        this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
+    }
     public MovieEntity() {}
     public String genreToString(List<Genre> genres){
         List<String> stringGenres = new ArrayList<String>();
@@ -55,79 +67,36 @@ public class MovieEntity
         return String.join(",",stringGenres);
     }
 
-    public List<MovieEntity> fromMovies(List<Movie> movies){
-        List<MovieEntity> entities = new ArrayList<>();
-        for (Movie movie : movies) {
-            MovieEntity entity = new MovieEntity(
-                    movie.getId(),
-                    movie.apiId,
-                    movie.getTitle(),
-                    movie.getDescription(),
-                    genreToString(movie.getGenres()),
-                    movie.getReleaseYear(),
-                    movie.imgUrl,
-                    movie.lengthInMinutes,
-                    movie.getRating()
-            );
-            entities.add(entity);
-        }
-        return entities;
+    public static List<MovieEntity> fromMovies(List<Movie> movies) {
+        return movies.stream()
+                .map(movie -> new MovieEntity(movie))
+                .collect(Collectors.toList());
     }
 
-    public List<Movie> toMovies(List<MovieEntity> movieEntities){
-        List<Movie> movies = new ArrayList<>();
+    public static List<Movie> toMovies(List<MovieEntity> movieEntities) {
+        return movieEntities.stream()  // Starte einen Stream über die List<MovieEntity>
+                .map(entity -> { // Für jede einzelne MovieEntity mache ...
 
-        for (MovieEntity entity : movieEntities) {
-            List<Genre> genreList = Arrays.stream(entity.genres.split(","))
-                    .map(genre -> genre.trim())
-                    .map(genre -> Genre.valueOf(genre)) // → konvertiere String zu Enum: "DRAMA" → Genre.DRAMA
-                    .collect(Collectors.toList()); // → List<Genre>
-            Movie movie = new Movie(
-                    entity.id,
-                    entity.apiId,
-                    entity.title,
-                    entity.description,
-                    entity.releaseYear,
-                    entity.rating,
-                    genreList,
-                    entity.imgUrl,
-                    entity.lengthInMinutes
-            );
-            movies.add(movie);
-        }
-        return movies;
+                    List<Genre> genreList = Arrays.stream(entity.genres.split(","))  // "DRAMA,COMEDY" → ["ACTION", "COMEDY"]
+                            .map(genre -> genre.trim()) // → entfernt Leerzeichen " DRAMA " → "DRAMA"
+                            .map(genre -> Genre.valueOf(genre)) // → konvertiere String zu Enum: "DRAMA" → Genre.DRAMA
+                            .collect(Collectors.toList()); // → List<Genre>
+
+                    // Erstelle ein neues Movie-Objekt mit allen Werten
+                    return new Movie(
+                            entity.title,
+                            entity.description,
+                            genreList, // Die genreList, die wir gerade erstellt haben
+                            entity.apiId,
+                            entity.releaseYear,
+                            entity.imgUrl,
+                            entity.lengthInMinutes,
+                            entity.rating // Autoboxing von double -> Double (= Subtyp von Number, deshalb ok)
+                    );
+                })
+                .collect(Collectors.toList());  // Sammle alle zurückgegebenen Movie-Objekte in einer neuen List<Movie>
     }
 
-    public static Movie findByApiId(long apiId) {
-        try {
-            Dao<MovieEntity, Long> dao = DaoManager.createDao(DatabaseManager.getConnectionSource(), MovieEntity.class);
-            MovieEntity entity = dao.queryBuilder()
-                    .where()
-                    .eq("apiId", apiId)
-                    .queryForFirst();
 
-            if (entity != null) {
-                List<Genre> genreList = Arrays.stream(entity.genres.split(","))
-                        .map(genre -> genre.trim())
-                        .map(genre -> Genre.valueOf(genre)) // → konvertiere String zu Enum: "DRAMA" → Genre.DRAMA
-                        .collect(Collectors.toList()); // → List<Genre>
-                Movie movie = new Movie(
-                        entity.id,
-                        entity.apiId,
-                        entity.title,
-                        entity.description,
-                        entity.releaseYear,
-                        entity.rating,
-                        genreList,
-                        entity.imgUrl,
-                        entity.lengthInMinutes);
-                return movie;
-            } else {
-                return null; // oder Optional<Movie> verwenden
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException("Fehler beim Suchen des Films mit API-ID: " + apiId, e);
-        }
-    }
 
 }
