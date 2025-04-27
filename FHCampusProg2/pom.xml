@@ -36,16 +36,11 @@
             <artifactId>okhttp</artifactId>
             <version>4.11.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-core</artifactId>
-            <version>5.1</version>
-            <scope>provided</scope> <!-- Oder test -->
-        </dependency>
+
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
-            <version>5.1</version> <!-- Oder die neueste Version -->
+            <version>6.1</version> <!-- Oder die neueste Version -->
         </dependency>
         <!-- H2 Datenbank Engine -->
         <dependency>

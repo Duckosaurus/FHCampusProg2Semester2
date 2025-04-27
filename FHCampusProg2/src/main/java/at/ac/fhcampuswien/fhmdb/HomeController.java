@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
+//import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -95,6 +95,26 @@ public class HomeController implements Initializable {
 
         }).start();
     }
+
+//    private void loadMoviesFromWatchlist() {
+//        // Hier müsstest du die Filme aus deiner Watchlist-Datenbank laden
+//        new Thread(() -> {
+//            List<Movie> moviesFromWatchlist = null;
+//            try {
+//                moviesFromWatchlist = WatchlistRepository.getInstance().getAllWatchlistMovies(); // oder eine ähnliche Methode von dir
+//                List<Movie> finalMoviesFromWatchlist = moviesFromWatchlist;
+//                javafx.application.Platform.runLater(() -> {
+//                    observableMovies.setAll(finalMoviesFromWatchlist);
+//                    movieListView.setItems(observableMovies);
+//                    movieListView.setCellFactory(movieListView -> new MovieCell()); // oder eine spezialisierte WatchlistCell
+//                });
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                observableMovies.clear();
+//                movieListView.setItems(observableMovies);
+//            }
+//        }).start();
+//    }
 
     public void search() {
         List<Movie> allMoviesSearched = searchMoviesWithText();
@@ -191,11 +211,11 @@ public class HomeController implements Initializable {
 
     @FXML
     private void navigateToHome(ActionEvent event) {
-        loadMoviesFromApi();  // Lädt die Filme von der API und zeigt sie im movieListView
+        loadMoviesFromApi();
     }
 
     @FXML
     private void navigateToWatchlist(ActionEvent event) {
-        //loadMoviesFromWatchlist(); // NEUE Methode, die wir gleich schreiben
+        //loadMoviesFromWatchlist();
     }
 }
