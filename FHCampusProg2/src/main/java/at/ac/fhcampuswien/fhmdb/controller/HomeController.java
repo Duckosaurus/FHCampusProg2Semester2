@@ -2,8 +2,10 @@ package at.ac.fhcampuswien.fhmdb.controller;
 
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -13,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
@@ -73,9 +76,22 @@ public class HomeController implements Initializable {
             search();
             sortMovies();
         });
+
+
     }
 
     private void loadMoviesFromApi() {
+        ClickEventHandler<Movie> addToWatchlistHandler = movie -> {
+            try {
+                WatchlistRepository watchlistRepo = new WatchlistRepository();
+                watchlistRepo.add(movie);
+            } catch (DatabaseException ex) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Speicherfehler",
+                        "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
+                                "Bitte versuche es später erneut.");
+            }
+        };
         new Thread(() -> {
             List<Movie> moviesFromApi = null;
             try {
@@ -86,7 +102,7 @@ public class HomeController implements Initializable {
                         observableMovies.setAll(finalMoviesFromApi);
                         allMovies.addAll(finalMoviesFromApi);
                         movieListView.setItems(observableMovies);
-                        movieListView.setCellFactory(movieListView -> new MovieCell());
+                        movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
                     });
                 }
             } catch (IOException e) {
@@ -193,7 +209,13 @@ public class HomeController implements Initializable {
         }
         return "Es gibt keinen häufigsten";
     }
-
+    private void showAlert(Alert.AlertType type, String title, String text) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(text);
+        a.showAndWait();
+    }
     public int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)

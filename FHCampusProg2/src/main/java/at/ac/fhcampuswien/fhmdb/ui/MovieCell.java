@@ -11,15 +11,18 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class MovieCell extends ListCell<Movie> {
 
     // Text Box
     private final Label title = new Label();
     private final Label detail = new Label();
-    private final Label genre = new Label();
-    private final Label rating_year = new Label();
-    private final VBox textLayout = new VBox(title, detail, genre, rating_year);
+    private final Label genres = new Label();
+    private final Label rating = new Label();
+    private final Label releaseYear = new Label();
+
+    private final VBox textLayout = new VBox(title, detail, genres, rating, releaseYear);
 
     // Button Box
     private final Button showDetailsButton = new Button("Show Details");
@@ -72,7 +75,6 @@ public class MovieCell extends ListCell<Movie> {
             }
         });
     }
-
     @Override
     protected void updateItem(Movie movie, boolean empty) {
         super.updateItem(movie, empty);
@@ -81,45 +83,50 @@ public class MovieCell extends ListCell<Movie> {
             setText(null);
             setGraphic(null);
         } else {
-            // Titel
+            this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());
-
-            // Beschreibung
             detail.setText(
                     movie.getDescription() != null
                             ? movie.getDescription()
                             : "No description available"
             );
-            detail.setWrapText(true);
-            detail.setMaxWidth(500);
+            // genre
+            if (!movie.getGenres().isEmpty()) {
+                String formattedGenres = movie.getGenres().stream()
+                        .map(Genre::name)
+                        .collect(Collectors.joining(", "));
 
-            // Genres
-            if (movie.getGenres().isEmpty()) {
-                genre.setText("");
+                genres.setText(formattedGenres);
+
             } else {
-                StringJoiner joiner = new StringJoiner(", ");
-                for (Genre genre : movie.getGenres()) {
-                    joiner.add(genre.toString());
-                }
-                genre.setText(joiner.toString());
+                genres.setText("No genres available");
             }
+            rating.setText("⭐ " + movie.getRating());
+            releaseYear.setText("📅 " + movie.getReleaseYear());
 
-            // Bewertung und Jahr
-            String ratingText = movie.getRating() != null
-                    ? String.format("Rating: %.1f", movie.getRating().doubleValue())
-                    : "Rating: N/A";
-
-            String yearText = "Year: " + movie.getReleaseYear();
-            rating_year.setText(ratingText + " | " + yearText);
-
-            // Styles
-            title.getStyleClass().add("title-cell");
+            title.getStyleClass().add("text-yellow");
             detail.getStyleClass().add("text-white");
-            genre.getStyleClass().add("genre-text");
-            rating_year.getStyleClass().add("text-white");
+            genres.getStyleClass().add("text-gray");
+            rating.getStyleClass().add("text-green");
+            releaseYear.getStyleClass().add("text-blue");
 
-            // Layout als Cell-Grafik anzeigen
-            setGraphic(mainLayout);
+            textLayout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
+
+            title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+            genres.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: #D3D3D3;");
+            rating.setStyle("-fx-font-size: 14px; -fx-text-fill: #00FF00;");
+            releaseYear.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFD700;");
+
+            detail.setWrapText(true);
+            detail.setMaxWidth(this.getScene().getWidth() - 30);
+            textLayout.setPadding(new Insets(10));
+            textLayout.setSpacing(5);
+
+            HBox extraInfo = new HBox(10, releaseYear, rating);
+            extraInfo.setSpacing(20);
+
+            textLayout.getChildren().setAll(title, genres, extraInfo, detail);
+            setGraphic(textLayout);
         }
     }
 }

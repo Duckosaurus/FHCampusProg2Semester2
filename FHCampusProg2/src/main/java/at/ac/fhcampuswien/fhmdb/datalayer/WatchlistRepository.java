@@ -36,6 +36,22 @@ public class WatchlistRepository
         return instance;
     }
 
+    public int add(Movie movie) {
+        try {
+            WatchlistMovieEntity existing = dao.queryBuilder()
+                    .where().eq("apiId", movie.getId())
+                    .queryForFirst();
+            if (existing == null) {
+                dao.create(new WatchlistMovieEntity(movie.getId()));
+                return 1;
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("WatchlistRepository: Fehler beim Hinzufügen des Films '" + movie.getTitle() +
+                    "' (API-ID: " + movie.getId() + ") zur Watchlist. Prüfe, ob der Eintrag bereits existiert oder ob " +
+                    "die DB-Verbindung funktioniert.", e);
+        }
+    }
     // Film zur Watchlist hinzufügen
     public void addToWatchlist(Movie movie)
     {
