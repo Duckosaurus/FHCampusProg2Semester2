@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.ui;
+package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -83,24 +83,32 @@ public class MovieCell extends ListCell<Movie> {
             setText(null);
             setGraphic(null);
         } else {
-            this.getStyleClass().add("movie-cell");
+            // Titel
             title.setText(movie.getTitle());
+
+            // Beschreibung
             detail.setText(
                     movie.getDescription() != null
                             ? movie.getDescription()
                             : "No description available"
             );
-            // genre
-            if (!movie.getGenres().isEmpty()) {
-                String formattedGenres = movie.getGenres().stream()
-                        .map(Genre::name)
-                        .collect(Collectors.joining(", "));
+            detail.setWrapText(true);
+            detail.setMaxWidth(500);
 
-                genres.setText(formattedGenres);
-
+            // Genres
+            if (movie.getGenres().isEmpty()) {
+                genres.setText("");
             } else {
-                genres.setText("No genres available");
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Genre genre : movie.getGenres()) {
+                    joiner.add(genre.toString());
+                }
+                genres.setText(joiner.toString());
             }
+
+            // Styles
+            title.getStyleClass().add("title-cell");
+            detail.getStyleClass().add("text-white");
             rating.setText("⭐ " + movie.getRating());
             releaseYear.setText("📅 " + movie.getReleaseYear());
 
@@ -116,17 +124,8 @@ public class MovieCell extends ListCell<Movie> {
             genres.setStyle("-fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: #D3D3D3;");
             rating.setStyle("-fx-font-size: 14px; -fx-text-fill: #00FF00;");
             releaseYear.setStyle("-fx-font-size: 14px; -fx-text-fill: #FFD700;");
-
-            detail.setWrapText(true);
-            detail.setMaxWidth(this.getScene().getWidth() - 30);
-            textLayout.setPadding(new Insets(10));
-            textLayout.setSpacing(5);
-
-            HBox extraInfo = new HBox(10, releaseYear, rating);
-            extraInfo.setSpacing(20);
-
-            textLayout.getChildren().setAll(title, genres, extraInfo, detail);
-            setGraphic(textLayout);
+            // Layout als Cell-Grafik anzeigen
+            setGraphic(mainLayout);
         }
     }
 }

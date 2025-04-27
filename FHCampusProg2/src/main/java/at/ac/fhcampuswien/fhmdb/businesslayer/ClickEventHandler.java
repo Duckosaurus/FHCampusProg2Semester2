@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.ui;
+package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 @FunctionalInterface
 public interface ClickEventHandler<T> {

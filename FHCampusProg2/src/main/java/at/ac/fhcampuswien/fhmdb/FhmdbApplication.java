@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.controller.MainController;
 import at.ac.fhcampuswien.fhmdb.datalayer.DatabaseManager;
 import javafx.application.Application;
 import javafx.application.Platform;

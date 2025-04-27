@@ -1,12 +1,10 @@
-package at.ac.fhcampuswien.fhmdb.controller;
+package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;

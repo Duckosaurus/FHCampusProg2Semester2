@@ -1,15 +1,11 @@
-package at.ac.fhcampuswien.fhmdb.controller;
+package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
-import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistMovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXListView;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +13,6 @@ import javafx.scene.control.Alert;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -45,7 +40,8 @@ public class WatchlistController implements Initializable
                     .collect(Collectors.toList());
 
             // Alle Filme aus der Datenbank holen
-            List<Movie> allMovies = MovieEntity.toMovies(movieRepo.getAllMovies());
+            List<MovieEntity> list = movieRepo.getAllMovies();
+            List<Movie> allMovies = MovieEntity.toMovies(list);
 
             // Nur Filme anzeigen, die in der Watchlist sind
             List<Movie> filtered = allMovies.stream()
