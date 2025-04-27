@@ -32,7 +32,7 @@ public class WatchlistRepository {
     public int add(Movie movie) {
         try {
             WatchlistMovieEntity existing = dao.queryBuilder()
-                    .where().eq("apiId", movie.getId())
+                    .where().eq("Id", movie.getId())
                     .queryForFirst();
             if (existing == null) {
                 dao.create(new WatchlistMovieEntity(movie.getId()));
