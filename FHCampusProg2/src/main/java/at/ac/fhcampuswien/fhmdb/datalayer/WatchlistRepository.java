@@ -17,16 +17,10 @@ public class WatchlistRepository {
     public WatchlistRepository() {
         try {
             dao = DaoManager.createDao(DatabaseManager.getConnectionSource(), WatchlistMovieEntity.class);
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DatabaseException("Fehler beim Erstellen des Watchlist-DAOs", e);
         }
-    }
-
-    public static WatchlistRepository getInstance() {
-        if (instance == null) {
-            instance = new WatchlistRepository();
-        }
-        return instance;
     }
 
     public int add(Movie movie) {
@@ -39,30 +33,32 @@ public class WatchlistRepository {
                 return 1;
             }
             return 0;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DatabaseException("WatchlistRepository: Fehler beim Hinzufügen des Films '" + movie.getTitle() +
                     "' (API-ID: " + movie.getId() + ") zur Watchlist. Prüfe, ob der Eintrag bereits existiert oder ob " +
-                    "die DB-Verbindung funktioniert.", e);
+                    "die DB-Verbindung aufrecht ist.", e);
         }
     }
 
     public List<WatchlistMovieEntity> getAll() {
         try {
             return dao.queryForAll();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new DatabaseException("WatchlistRepository: Fehler beim Auslesen aller Watchlist-Einträge. " +
                     "Möglicherweise existiert die Tabelle nicht oder die Verbindung zur DB ist unterbrochen.", e);
         }
     }
 
-    // Film aus der Watchlist entfernen
     public void removeFromWatchlist(UUID apiId) {
         try {
             DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("MovieId", apiId);
             deleteBuilder.delete();
-        } catch (SQLException e) {
-            throw new DatabaseException("Fehler beim Entfernen aus der Watchlist", e);
+        }
+        catch (SQLException e) {
+            throw new DatabaseException("WatchlistRepository: Fehler beim Entfernen aus der Watchlist", e);
         }
     }
 }

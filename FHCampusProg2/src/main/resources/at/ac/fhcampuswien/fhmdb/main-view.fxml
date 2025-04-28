@@ -15,10 +15,8 @@
            fx:controller="at.ac.fhcampuswien.fhmdb.businesslayer.MainController"
            stylesheets="@styles.css">
 
-    <!-- Hauptlayout mit Kopfzeile & dynamischem Inhalt -->
     <BorderPane fx:id="mainLayout">
 
-        <!-- Kopfzeile -->
         <top>
             <HBox alignment="CENTER_LEFT"
                   spacing="10"
@@ -35,11 +33,9 @@
                     </font>
                 </Label>
 
-                <!-- Willkommenstext -->
                 <Label text="Welcome to FHMDb!"
                        styleClass="text-white" />
 
-                <!-- Platzhalter für rechte Ausrichtung -->
                 <Pane HBox.hgrow="ALWAYS" />
 
                 <!-- Hamburger-Menü -->
@@ -50,13 +46,13 @@
             </HBox>
         </top>
 
-        <!-- Dynamischer Inhaltsbereich -->
+        <!-- Inhalt für Home oder Watchlist -->
         <center>
             <StackPane fx:id="mainContent" />
         </center>
     </BorderPane>
 
-    <!-- Overlay Sidebar -->
+    <!--  Sidebar -->
     <VBox fx:id="sidebar"
           visible="false"
           managed="false"
@@ -67,16 +63,13 @@
           prefWidth="200"
           maxWidth="200">
 
-        <!-- Navigationselemente -->
+        <!-- Nav -->
         <Label text="Home"
                onMouseClicked="#loadHomeView"
                styleClass="nav-label" />
 
         <Label text="Watchlist"
                onMouseClicked="#loadWatchlistView"
-               styleClass="nav-label" />
-
-        <Label text="About"
                styleClass="nav-label" />
     </VBox>
 </StackPane>

@@ -16,25 +16,18 @@ public class DatabaseManager {
     public static String password = "";
     public static ConnectionSource conn;
     public static Dao<MovieEntity, UUID> movieDao;
-    public static Dao<WatchlistMovieEntity, Long> watchlistDao;
 
     public static void createConnectionsSource() throws SQLException {
-        if (conn == null) {
-            conn = new JdbcConnectionSource(DB_URL, username, password);
-        }
+        if (conn == null) conn = new JdbcConnectionSource(DB_URL, username, password);
     }
 
     public static ConnectionSource getConnectionSource() throws SQLException {
-        if (conn == null) {
-            createConnectionsSource();
-        }
+        if (conn == null) createConnectionsSource();
         return conn;
     }
 
     public static void createTables() throws SQLException {
-        if (conn == null) {
-            createConnectionsSource();
-        }
+        if (conn == null) createConnectionsSource();
         TableUtils.createTableIfNotExists(conn, MovieEntity.class);
         TableUtils.createTableIfNotExists(conn, WatchlistMovieEntity.class);
     }
@@ -45,13 +38,5 @@ public class DatabaseManager {
             movieDao = DaoManager.createDao(conn, MovieEntity.class);
         }
         return movieDao;
-    }
-
-    public static Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
-        if (watchlistDao == null) {
-            createConnectionsSource();
-            watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
-        }
-        return watchlistDao;
     }
 }

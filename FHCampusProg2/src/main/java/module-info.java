@@ -13,5 +13,7 @@ module at.ac.fhcampuswien.fhmdb {
     opens at.ac.fhcampuswien.fhmdb.datalayer to ormlite.jdbc;
     exports at.ac.fhcampuswien.fhmdb;
     exports at.ac.fhcampuswien.fhmdb.businesslayer;
+    exports at.ac.fhcampuswien.fhmdb.exceptions;
+    exports at.ac.fhcampuswien.fhmdb.models;
     opens at.ac.fhcampuswien.fhmdb.businesslayer to javafx.fxml;
 }

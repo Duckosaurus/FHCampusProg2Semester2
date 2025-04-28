@@ -38,11 +38,12 @@ public class MovieEntity {
         this.releaseYear = movie.getReleaseYear();
         this.imgUrl = movie.getImgUrl();
         this.lengthInMinutes = movie.getLengthInMinutes();
-        this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0; // .doubleValue() sagt Java -> dieses Number Objekt (movie.getRating()) ist ein double
+        this.rating = movie.getRating() != null ? movie.getRating().doubleValue() : 0.0;
     }
-public MovieEntity(){
+    // Leerer Konstruktor (wichtig für ORMLite)
+    public MovieEntity() {
+    }
 
-}
     public String genreToString(List<Genre> genres) {
         List<String> stringGenres = new ArrayList<String>();
         for (Genre genre : genres)
@@ -57,26 +58,23 @@ public MovieEntity(){
     }
 
     public static List<Movie> toMovies(List<MovieEntity> movieEntities) {
-        return movieEntities.stream()  // Starte einen Stream über die List<MovieEntity>
-                .map(entity -> { // Für jede einzelne MovieEntity mache ...
-
-                    List<Genre> genreList = Arrays.stream(entity.genres.split(","))  // "DRAMA,COMEDY" → ["ACTION", "COMEDY"]
-                            .map(genre -> genre.trim()) // → entfernt Leerzeichen " DRAMA " → "DRAMA"
-                            .map(genre -> Genre.valueOf(genre)) // → konvertiere String zu Enum: "DRAMA" → Genre.DRAMA
-                            .collect(Collectors.toList()); // → List<Genre>
-
-                    // Erstelle ein neues Movie-Objekt mit allen Werten
+        return movieEntities.stream()
+                .map(entity -> {
+                    List<Genre> genreList = Arrays.stream(entity.genres.split(","))
+                            .map(genre -> genre.trim())
+                            .map(genre -> Genre.valueOf(genre))
+                            .collect(Collectors.toList());
                     return new Movie(
                             entity.title,
                             entity.description,
-                            genreList, // Die genreList, die wir gerade erstellt haben
+                            genreList,
                             entity.id,
                             entity.releaseYear,
                             entity.imgUrl,
                             entity.lengthInMinutes,
-                            entity.rating // Autoboxing von double -> Double (= Subtyp von Number, deshalb ok)
+                            entity.rating
                     );
                 })
-                .collect(Collectors.toList());  // Sammle alle zurückgegebenen Movie-Objekte in einer neuen List<Movie>
+                .collect(Collectors.toList());
     }
 }

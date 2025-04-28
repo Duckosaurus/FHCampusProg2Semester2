@@ -1,9 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.businesslayer;
 
-import at.ac.fhcampuswien.fhmdb.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXButton;
@@ -11,14 +11,10 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,35 +45,44 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        genreComboBox.getItems().addAll(Genre.values());
-        genreComboBox.getSelectionModel().selectFirst();
-        ratingComboBox.getItems().add("Filter by Rating");
-        int[] ratingsNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        for (var item : ratingsNumbers) {
-            ratingComboBox.getItems().add(item);
-        }
-        ratingComboBox.getSelectionModel().selectFirst();
-
-        releaseYearComboBox.getItems().add("Filter by Release Year");
-        for (int i = 1950; i <= LocalDate.now().getYear(); i++) {
-            releaseYearComboBox.getItems().add(i);
-        }
-        releaseYearComboBox.getSelectionModel().selectFirst();
-        loadMoviesFromApi();
-        sortMovies();
-        sortBtn.setOnAction(actionEvent -> {
-            if (sortBtn.getText().equals("Sort (asc)")) {
-                sortMovies();
-                sortBtn.setText("Sort (desc)");
-            } else {
-                sortMovies();
-                sortBtn.setText("Sort (asc)");
+        try {
+            genreComboBox.getItems().addAll(Genre.values());
+            genreComboBox.getSelectionModel().selectFirst();
+            ratingComboBox.getItems().add("Filter by Rating");
+            int[] ratingsNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            for (var item : ratingsNumbers) {
+                ratingComboBox.getItems().add(item);
             }
-        });
-        searchBtn.setOnAction(actionEvent -> {
-            search();
+            ratingComboBox.getSelectionModel().selectFirst();
+
+            releaseYearComboBox.getItems().add("Filter by Release Year");
+            for (int i = 1950; i <= LocalDate.now().getYear(); i++) {
+                releaseYearComboBox.getItems().add(i);
+            }
+            releaseYearComboBox.getSelectionModel().selectFirst();
+            loadMoviesFromApi();
             sortMovies();
-        });
+            sortBtn.setOnAction(actionEvent -> {
+                if (sortBtn.getText().equals("Sort (asc)")) {
+                    sortMovies();
+                    sortBtn.setText("Sort (desc)");
+                }
+                else {
+                    sortMovies();
+                    sortBtn.setText("Sort (asc)");
+                }
+            });
+            searchBtn.setOnAction(actionEvent -> {
+                search();
+                sortMovies();
+            });
+        }
+        catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Fehler beim Start",
+                    "Beim Start der Anwendung ist ein Fehler aufgetreten. Bitte versuche es erneut.");
+        }
+
     }
 
     private void loadMoviesFromApi() {
@@ -85,17 +90,17 @@ public class HomeController implements Initializable {
             try {
                 WatchlistRepository watchlistRepo = new WatchlistRepository();
                 watchlistRepo.add(movie);
-            } catch (DatabaseException ex) {
+            }
+            catch (DatabaseException ex) {
                 showAlert(Alert.AlertType.ERROR,
-                        "Speicherfehler",
-                        "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
-                                "Bitte versuche es später erneut.");
+                        "Fehler beim Speichern",
+                        "Beim Speichern in die Watchlist ist ein Fehler aufgetreten. Bitte versuche es erneut.");
             }
         };
         new Thread(() -> {
-            List<Movie> moviesFromApi = null;
+            List<Movie> moviesFromApi;
             try {
-                moviesFromApi = MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
+                moviesFromApi = Helper.MovieAPI.fetchMovies(searchField.getText(), (Genre) genreComboBox.getValue(), releaseYearComboBox.getValue().toString(), ratingComboBox.getValue().toString());
                 if (moviesFromApi != null) {
 
                     MovieRepository movieRepo = new MovieRepository();
@@ -105,18 +110,24 @@ public class HomeController implements Initializable {
                             movieRepo.save(movie);  // Film speichern, wenn noch nicht vorhanden
                         }
                     }
-
-                    List<Movie> finalMoviesFromApi = moviesFromApi;
                     javafx.application.Platform.runLater(() -> {
-                        observableMovies.setAll(finalMoviesFromApi);
-                        allMovies.addAll(finalMoviesFromApi);
+                        observableMovies.setAll(moviesFromApi);
+                        allMovies.addAll(moviesFromApi);
                         movieListView.setItems(observableMovies);
                         movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
                     });
                 }
-            } catch (IOException | SQLException e) {
-                observableMovies.clear();
-                movieListView.setItems(observableMovies);
+            }
+            catch (MovieApiException ex) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Fehler beim Zugriff zur API",
+                        "Beim Zugriff auf die API ist ein Fehler aufgetreten. Bitte versuche es erneut.");
+
+            }
+            catch (IOException | SQLException ex) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Fehler beim Abrufen",
+                        "Beim Abrufen der Filme ist ein Fehler aufgetreten. Bitte versuche es erneut.");
             }
 
         }).start();
@@ -199,7 +210,7 @@ public class HomeController implements Initializable {
         return "Es gibt keinen häufigsten";
     }
 
-    private void showAlert(Alert.AlertType type, String title, String text) {
+    public static void showAlert(Alert.AlertType type, String title, String text) {
         Alert a = new Alert(type);
         a.setTitle(title);
         a.setHeaderText(null);

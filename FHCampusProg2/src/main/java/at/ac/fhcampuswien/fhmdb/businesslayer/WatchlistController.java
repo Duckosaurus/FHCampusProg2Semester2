@@ -26,11 +26,9 @@ public class WatchlistController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            // Daten aus Repositories holen
             WatchlistRepository watchlistRepo = new WatchlistRepository();
             MovieRepository movieRepo = new MovieRepository();
 
-            // Liste mit gespeicherten API-IDs
             List<UUID> watchlistIds = watchlistRepo.getAll().stream()
                     .map(WatchlistMovieEntity::getMovieId)
                     .toList();
@@ -44,38 +42,33 @@ public class WatchlistController implements Initializable {
                     .filter(m -> watchlistIds.contains(m.getId()))
                     .collect(Collectors.toList());
 
-            // Click-Handler zum Entfernen definieren
+            // Click Handler fürs Entfernen
             ClickEventHandler<Movie> removeHandler = movie -> {
                 try {
                     watchlistRepo.removeFromWatchlist(movie.getId());
                     initialize(null, null);// Liste neu laden nach Entfernen
-                } catch (DatabaseException e) {
-                    showAlert(Alert.AlertType.ERROR,
-                            "Entfernen fehlgeschlagen",
-                            "Beim Entfernen von „" + movie.getTitle() +
+                }
+                catch (DatabaseException e) {
+                    HomeController.showAlert(Alert.AlertType.ERROR,
+                            "Löschen fehlgeschlagen",
+                            "Beim Löschen von „" + movie.getTitle() +
                                     "“ ist ein Fehler aufgetreten.\nBitte versuche es später erneut.");
                 }
             };
 
-            // UI mit Daten befüllen
+            // ListeView mit Daten befüllen
             watchlistListView.setItems(FXCollections.observableArrayList(filtered));
             watchlistListView.setCellFactory(view -> new MovieCell(removeHandler, true));
 
-        } catch (DatabaseException e) {
-            showAlert(Alert.AlertType.ERROR,
-                    "Watchlist konnte nicht geladen werden",
-                    "Es gab ein Problem beim Zugriff auf deine lokale Watchlist‑Datenbank.\n" +
-                            "Bitte prüfe, ob die App Schreib‑ und Leserechte für den Speicherordner besitzt " +
-                            "und genügend freier Speicherplatz vorhanden ist. " +
-                            "Starte die App neu, wenn das Problem weiterhin besteht.");
         }
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        catch (DatabaseException e) {
+            HomeController.showAlert(Alert.AlertType.ERROR,
+                    "Watchlist konnte nicht geladen werden",
+                    "Es gab ein Problem beim Zugriff auf die lokale Datenbank.\n" +
+                            "Bitte prüfe, ob die App die korrekten Rechte für den Ordner besitzt " +
+                            "und ob genug freier Speicherplatz vorhanden ist. " +
+                            "Wenn das Problem weiterhin besteht starte die Anwendung neu oder" +
+                            "melde dich bei deinem Administrator.");
+        }
     }
 }

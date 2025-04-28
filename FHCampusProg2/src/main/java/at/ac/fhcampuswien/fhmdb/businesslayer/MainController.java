@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb.businesslayer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -15,13 +16,10 @@ public class MainController {
     public BorderPane mainLayout;
     @FXML
     private StackPane mainContent;
-
     @FXML
     private VBox sidebar;
-
     @FXML
     private Label hamburgerIcon;
-
     private boolean isSidebarVisible = false;
 
     @FXML
@@ -58,11 +56,13 @@ public class MainController {
 
     private void loadView(String fxmlFile) {
         try {
-            Pane view = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/at/ac/fhcampuswien/fhmdb/"+fxmlFile)));
+            Pane view = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/at/ac/fhcampuswien/fhmdb/" + fxmlFile)));
             mainContent.getChildren().setAll(view);
-        } catch (Exception e) {
-            System.err.println("Could not load view: " + fxmlFile);
-            e.printStackTrace();
+        }
+        catch (Exception e) {
+            HomeController.showAlert(Alert.AlertType.ERROR,
+                    "Fehler beim Laden der Ansicht",
+                    "Beim Laden der Ansicht ist ein Fehler aufgetreten. Bitte starte die Anwendung neu.");
         }
     }
 }

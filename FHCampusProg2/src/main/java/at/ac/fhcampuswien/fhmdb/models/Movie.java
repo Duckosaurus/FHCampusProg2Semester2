@@ -1,7 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
-//import com.j256.ormlite.field.DatabaseField;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,29 +20,11 @@ public class Movie {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Movie(UUID id, String apiId, String title, String description, int releaseYear, Number rating, List<Genre> genres, String imgUrl, int lengthInMinutes) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.genres = genres;
-        this.releaseYear = releaseYear;
-        this.imgUrl = imgUrl;
-        this.lengthInMinutes = lengthInMinutes;
-        this.rating = rating;
-    }
 
     public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
         this.description = description;
         this.genres = genres;
-        this.mainCast = mainCast;
-        this.director = director;
-        this.releaseYear = releaseYear;
-        this.rating = rating;
     }
 
     public Movie(String title, String description, List<Genre> genres, List<String> mainCast,
@@ -62,32 +42,16 @@ public class Movie {
         return mainCast;
     }
 
-    public void setMainCast(List<String> mainCast) {
-        this.mainCast = mainCast;
-    }
-
     public String getDirector() {
         return director;
-    }
-
-    public void setDirector(String director) {
-        this.director = director;
     }
 
     public int getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
     public Number getRating() {
         return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
     }
 
     public String getTitle() {

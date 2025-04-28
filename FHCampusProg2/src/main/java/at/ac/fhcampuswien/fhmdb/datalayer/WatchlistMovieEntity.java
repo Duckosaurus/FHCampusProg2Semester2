@@ -7,10 +7,6 @@ import java.util.UUID;
 
 @DatabaseTable(tableName = "watchlist_movies")
 public class WatchlistMovieEntity {
-
-    @DatabaseField(generatedId = true)
-    private long id;
-
     @DatabaseField
     private UUID movieId;
 

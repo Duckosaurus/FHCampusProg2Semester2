@@ -20,28 +20,19 @@ public class MovieCell extends ListCell<Movie> {
     private final Label genres = new Label();
     private final Label rating = new Label();
     private final Label releaseYear = new Label();
-
     private final VBox textLayout = new VBox(title, detail, genres, rating, releaseYear);
 
     // Button Box
     private final Button watchlistButton = new Button("To Watchlist");
     private final HBox buttonLayout = new HBox(watchlistButton);
 
-    // Main Box für Text- & Button Box
     private final HBox mainLayout = new HBox();
-
-    // ClickEventHandler für Watchlist-Button
-    private ClickEventHandler<Movie> onWatchlistClicked;
-    private boolean isInWatchlistView;  // Unterscheidung Home/Watchlist
 
     public MovieCell() {
     }
 
     // MovieCell Konstruktor
     public MovieCell(ClickEventHandler<Movie> onWatchlistClicked, boolean isInWatchlistView) {
-        this.onWatchlistClicked = onWatchlistClicked;
-        this.isInWatchlistView = isInWatchlistView;
-
         // Text Box Layout
         textLayout.setSpacing(10);
         textLayout.setPadding(new Insets(10));
@@ -62,10 +53,8 @@ public class MovieCell extends ListCell<Movie> {
         // Button-Styles
         watchlistButton.getStyleClass().add("button-cell");
 
-        // Button-Beschriftung je nach View
         watchlistButton.setText(isInWatchlistView ? "Remove" : "To Watchlist");
 
-        // Handler-Zuweisung per Lambda
         watchlistButton.setOnAction(event -> {
             if (getItem() != null && onWatchlistClicked != null) {
                 onWatchlistClicked.onClick(getItem());
@@ -80,7 +69,8 @@ public class MovieCell extends ListCell<Movie> {
         if (empty || movie == null) {
             setText(null);
             setGraphic(null);
-        } else {
+        }
+        else {
             // Titel
             title.setText(movie.getTitle());
 
@@ -96,7 +86,8 @@ public class MovieCell extends ListCell<Movie> {
             // Genres
             if (movie.getGenres().isEmpty()) {
                 genres.setText("");
-            } else {
+            }
+            else {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Genre genre : movie.getGenres()) {
                     joiner.add(genre.toString());

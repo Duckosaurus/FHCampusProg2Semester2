@@ -1,9 +1,7 @@
-/* Grundschrift */
 .root {
     -fx-font-family: "Arial";
 }
 
-/* Hintergrundfarben */
 .background-yellow {
     -fx-background-color: #f5c518;
 }
@@ -16,7 +14,6 @@
     -fx-background-color: #454545;
 }
 
-/* Textfarben */
 .text-white {
     -fx-text-fill: #ffffff;
 }
@@ -25,14 +22,12 @@
     -fx-text-fill: #f5c518;
 }
 
-/* ListView-Zellen */
 .list-view .list-cell:even,
 .list-view .list-cell:odd {
     -fx-background-color: black;
     -fx-text-fill: white;
 }
 
-/* MovieCard-Design */
 .movie-cell {
     -fx-background-color: black;
     -fx-padding: 2;
@@ -54,13 +49,11 @@
     -fx-cursor: hand;
 }
 
-/* ComboBox-Stil */
 .filter-combo-box {
     -fx-background-color: white;
     -fx-text-fill: #ffffff;
 }
 
-/* Sidebar Navigation */
 .sidebar {
     -fx-background-color: #eee;
 }
