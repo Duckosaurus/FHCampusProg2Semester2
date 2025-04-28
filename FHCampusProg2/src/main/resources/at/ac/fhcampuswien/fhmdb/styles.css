@@ -57,7 +57,18 @@
 .sidebar {
     -fx-background-color: #eee;
 }
+.close-button {
+    -fx-alignment: CENTER;
+    -fx-background-color: transparent;
+    -fx-text-fill: #000;
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
 
+.close-button:hover {
+    -fx-text-fill: red;
+}
 .headline-label {
     -fx-font-size: 24.0;
     -fx-font-weight: bold;

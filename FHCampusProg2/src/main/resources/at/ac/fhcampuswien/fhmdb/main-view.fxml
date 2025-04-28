@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Button?>
 <StackPane
            xmlns="http://javafx.com/javafx/15.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -57,12 +58,14 @@
           visible="false"
           managed="false"
           spacing="15"
-          StackPane.alignment="TOP_LEFT"
+          StackPane.alignment="TOP_RIGHT"
           styleClass="sidebar"
           style="-fx-padding: 15;"
           prefWidth="200"
           maxWidth="200">
-
+        <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0;">
+            <Button text="X" onAction="#toggleSidebar" styleClass="close-button" />
+        </HBox>
         <!-- Nav -->
         <Label text="Home"
                onMouseClicked="#loadHomeView"
