@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.businesslayer;
 
+import at.ac.fhcampuswien.fhmdb.datalayer.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.datalayer.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.datalayer.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
@@ -17,7 +18,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.rmi.UnknownHostException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
@@ -118,11 +121,20 @@ public class HomeController implements Initializable {
                     });
                 }
             }
-            catch (MovieApiException ex) {
-                showAlert(Alert.AlertType.ERROR,
-                        "Fehler beim Zugriff zur API",
-                        "Beim Zugriff auf die API ist ein Fehler aufgetreten. Bitte versuche es erneut.");
-
+            catch (MovieApiException | DatabaseException e) {
+                List<Movie> cached = new ArrayList<>();
+                try {
+                    cached = MovieEntity.toMovies(new MovieRepository().getAllMovies());
+                }
+                catch (DatabaseException ex) {
+                    showAlert(Alert.AlertType.ERROR,
+                            "Laden der Filme fehlgeschlagen",
+                            "Bitte überprüfe die Verbindung zur Datenbank und versuche es später erneut.");
+                }
+                observableMovies.setAll(cached);
+                allMovies.addAll(cached);
+                movieListView.setItems(observableMovies);
+                movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));
             }
             catch (IOException | SQLException ex) {
                 showAlert(Alert.AlertType.ERROR,

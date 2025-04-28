@@ -12,6 +12,7 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.rmi.UnknownHostException;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +39,9 @@ public class Helper {
                 String jsonResponse = response.body().string();
                 System.out.println(jsonResponse);
                 return MovieParser.parseMovies(jsonResponse);
+            }
+            catch (Exception e) {
+                throw new MovieApiException("API-Fehler: " + e.getMessage());
             }
         }
     }
