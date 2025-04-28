@@ -18,9 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.rmi.UnknownHostException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
@@ -131,7 +129,9 @@ public class HomeController implements Initializable {
                             "Laden der Filme fehlgeschlagen",
                             "Bitte überprüfe die Verbindung zur Datenbank und versuche es später erneut.");
                 }
+                observableMovies.clear();
                 observableMovies.setAll(cached);
+                allMovies.clear();
                 allMovies.addAll(cached);
                 movieListView.setItems(observableMovies);
                 movieListView.setCellFactory(movieListView -> new MovieCell(addToWatchlistHandler, false));

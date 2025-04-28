@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class WatchlistRepository {
-    private static WatchlistRepository instance;
     private final Dao<WatchlistMovieEntity, Long> dao;
 
     public WatchlistRepository() {
