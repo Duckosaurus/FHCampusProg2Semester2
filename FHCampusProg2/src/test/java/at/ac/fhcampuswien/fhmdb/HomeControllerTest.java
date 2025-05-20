@@ -54,7 +54,7 @@ class HomeControllerTest {
         );
         controller.observableMovies.setAll(controller.allMovies);
         controller.ascending = true;
-        controller.sortMovies();
+        controller.sortMovies(false);
 
         ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("A Movie", sortedMovies.get(0).getTitle());
@@ -70,8 +70,8 @@ class HomeControllerTest {
         controller.observableMovies.setAll(controller.allMovies);
 
         controller.ascending = true;
-        controller.sortMovies();
-        controller.sortMovies();
+        controller.sortMovies(false);
+        controller.sortMovies(false);
 
         ObservableList<Movie> sortedMovies = controller.observableMovies;
         assertEquals("B Movie", sortedMovies.get(0).getTitle());

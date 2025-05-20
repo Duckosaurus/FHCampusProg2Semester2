@@ -7,6 +7,10 @@ import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.sorting.AscendingState;
+import at.ac.fhcampuswien.fhmdb.sorting.DescendingState;
+import at.ac.fhcampuswien.fhmdb.sorting.NotSortedState;
+import at.ac.fhcampuswien.fhmdb.sorting.SortContext;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -43,10 +47,11 @@ public class HomeController implements Initializable {
     public final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     public List<Movie> allMovies = new ArrayList<>();
     public boolean ascending = true;
-
+    private SortContext sortContext = new SortContext();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            sortContext.setState(new NotSortedState());
             genreComboBox.getItems().addAll(Genre.values());
             genreComboBox.getSelectionModel().selectFirst();
             ratingComboBox.getItems().add("Filter by Rating");
@@ -62,20 +67,20 @@ public class HomeController implements Initializable {
             }
             releaseYearComboBox.getSelectionModel().selectFirst();
             loadMoviesFromApi();
-            sortMovies();
+            sortMovies(true);
             sortBtn.setOnAction(actionEvent -> {
                 if (sortBtn.getText().equals("Sort (asc)")) {
-                    sortMovies();
+                    sortMovies(false);
                     sortBtn.setText("Sort (desc)");
                 }
                 else {
-                    sortMovies();
+                    sortMovies(false);
                     sortBtn.setText("Sort (asc)");
                 }
             });
             searchBtn.setOnAction(actionEvent -> {
                 search();
-                sortMovies();
+                sortMovies(false);
             });
         }
         catch (Exception e) {
@@ -169,13 +174,13 @@ public class HomeController implements Initializable {
                 .filter(movie -> selectedGenre == null || movie.getGenres().contains(selectedGenre))
                 .toList();
         observableMovies.setAll(allMoviesSearched);
-        sortMovies();
+        sortMovies(false);
     }
 
     public boolean filterAllGenre(Genre selectedGenre, List<Movie> allMoviesSearched) {
         if (selectedGenre == Genre.ALL) {
             observableMovies.setAll(allMoviesSearched);
-            sortMovies();
+            sortMovies(false);
             return true;
         }
         return false;
@@ -192,14 +197,27 @@ public class HomeController implements Initializable {
         return allMovies;
     }
 
-    public void sortMovies() {
-        Comparator<Movie> comparator = Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER);
-        if (!ascending) {
-            comparator = comparator.reversed();
+    public void sortMovies(Boolean unsorted) {
+        if(unsorted) {
+            sortContext.setState(new NotSortedState());
+            applySortAndRefresh();
         }
-        observableMovies.sort(comparator);
-        ascending = !ascending;
-        sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
+        else{
+            sortContext.setState(new AscendingState());
+            if (!ascending) {
+                sortContext.setState(new DescendingState());
+            }
+            applySortAndRefresh();
+            ascending = !ascending;
+            sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
+        }
+    }
+
+    private void applySortAndRefresh() {
+        if (allMovies != null) {
+            allMovies = sortContext.sort(allMovies);
+            observableMovies.setAll(allMovies);
+        }
     }
 
     public String getMostPopularActor(List<Movie> movies) {
