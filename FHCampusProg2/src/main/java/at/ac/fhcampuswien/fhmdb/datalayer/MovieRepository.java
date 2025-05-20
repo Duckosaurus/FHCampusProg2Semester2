@@ -31,17 +31,6 @@ public class MovieRepository {
         }
     }
 
-    public MovieEntity getMovie() {
-        try {
-            List<MovieEntity> all = dao.queryForAll();
-            return all.isEmpty() ? null : all.get(0);
-        }
-        catch (SQLException e) {
-            throw new DatabaseException("MovieRepository: Fehler beim Auslesen eines Films aus der DB. " +
-                    "Überprüfe die Existenz der Tabelle und deine SQL-Abfragen.", e);
-        }
-    }
-
     public MovieEntity findById(UUID movieId) {
         try {
             return dao.queryForId(movieId);
